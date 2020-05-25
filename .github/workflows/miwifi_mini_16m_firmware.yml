@@ -25,10 +25,10 @@ env:
   REPO_URL: https://github.com/u0225/lede
   # REPO_URL: https://github.com/u0225/lede-1701
   # REPO_URL: https://github.com/u0225/lede-R8.1.12_181212
-  REPO_BRANCH: lede-R9.3.7
+  REPO_BRANCH: r9.3.7
   # REPO_BRANCH: master
   TARGET: Openwrt_miwifi-mini-16m
-  # DIY_SH: diy/diy.sh
+  DIY_SH: diy/diy.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -95,9 +95,9 @@ jobs:
           cat armt/miwifi_mini_16m >> lede/.config
           cat armt/armt_luci_app_16m >> lede/.config
           # cat armt/armt_Setting >> lede/.config
-          # chmod +x $DIY_SH
+          chmod +x $DIY_SH
           cd lede
-          # ../$DIY_SH
+          ../$DIY_SH
           ./scripts/feeds install -a
           make defconfig
 
