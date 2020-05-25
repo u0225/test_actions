@@ -16,7 +16,7 @@
 		led-upgrade = &led_sys;
 	};
 
-	leds {
+	gpio-leds {
 		compatible = "gpio-leds";
 
 		led_sys: sys {
@@ -37,8 +37,9 @@
 		};
 	};
 
-	keys {
-		compatible = "gpio-keys";
+	gpio-keys-polled {
+		compatible = "gpio-keys-polled";
+		poll-interval = <20>;
 
 		reset {
 			label = "reset";
@@ -115,9 +116,11 @@
 	ralink,mtd-eeprom = <&factory 0>;
 };
 
-&state_default {
-	default {
-		ralink,group = "i2c", "uartf", "spi refclk", "wled";
-		ralink,function = "gpio";
+&pinctrl {
+	state_default: pinctrl0 {
+		default {
+			ralink,group = "i2c", "uartf", "spi refclk", "wled";
+			ralink,function = "gpio";
+		};
 	};
 };
