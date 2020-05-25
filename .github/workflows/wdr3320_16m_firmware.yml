@@ -25,10 +25,10 @@ env:
   REPO_URL: https://github.com/u0225/lede
   # REPO_URL: https://github.com/u0225/lede-1701
   # REPO_URL: https://github.com/u0225/lede-R8.1.12_181212
-  REPO_BRANCH: lede-R9.3.7
+  REPO_BRANCH: r8.1.12
   # REPO_BRANCH: master
   TARGET: Openwrt_wdr3320-16m
-  # DIY_SH: diy/diy.sh
+  DIY_SH: armt/armt_diy.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -65,8 +65,8 @@ jobs:
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
-          cd lede
-          sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
+          # cd lede
+          # sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -95,17 +95,17 @@ jobs:
           cat armt/wdr3320_16m >> lede/.config
           cat armt/armt_luci_app_16m >> lede/.config
           # cat armt/armt_Setting >> lede/.config
-          # chmod +x $DIY_SH
+          chmod +x $DIY_SH
           cd lede
-          # ../$DIY_SH
+          ../$DIY_SH
           ./scripts/feeds install -a
           make defconfig
 
-      # - name: Setting-armt
-      #   run: |
-      #     sudo mkdir -p -m 777 lede/target lede/target/linux lede/target/linux/ar71xx lede/target/linux/ar71xx/image lede/target/linux/ramips lede/target/linux/ramips/image lede/target/linux/ramips/dts
-      #     rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk && rm -f lede/target/linux/ramips/image/mt7620.mk && rm -f lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
-      #     cp ./setting_armt/wdr3320.m ./lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp ./setting_armt/mt7620.m ./lede/target/linux/ramips/image/mt7620.mk && cp ./setting_armt/wr8305rt.d ./lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
+      - name: Setting-armt
+        run: |
+          sudo mkdir -p -m 777 lede/target lede/target/linux lede/target/linux/ar71xx lede/target/linux/ar71xx/image lede/target/linux/ramips lede/target/linux/ramips/image lede/target/linux/ramips/dts
+          rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk && rm -f lede/target/linux/ramips/image/mt7620.mk && rm -f lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
+          cp ./setting_armt/r8/tiny-tp-link.mk ./lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp ./setting_armt/r8/mt7620.mk ./lede/target/linux/ramips/image/mt7620.mk && cp ./setting_armt/r8/ZBT-WR8305RT.dts ./lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
 
       - name: Make download
         run: |
