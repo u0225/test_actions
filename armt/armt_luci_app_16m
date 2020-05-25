@@ -1,0 +1,63 @@
+
+#
+# Armt_setting
+#
+# CONFIG_PACKAGE_autosamba is not set
+# CONFIG_PACKAGE_samba36-server is not set
+CONFIG_PACKAGE_automount=y
+CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
+CONFIG_PACKAGE_ipv6helper=y
+
+CONFIG_PACKAGE_curl=y
+CONFIG_PACKAGE_htop=y
+CONFIG_PACKAGE_nano=y
+CONFIG_PACKAGE_screen=y
+CONFIG_PACKAGE_tree=y
+CONFIG_PACKAGE_vim-fuller=y
+CONFIG_PACKAGE_wget=y
+
+#
+# 3. Applications
+#
+CONFIG_PACKAGE_luci-app-accesscontrol=y
+# CONFIG_PACKAGE_luci-app-aliddns is not set
+# CONFIG_PACKAGE_luci-app-pptp-server is not set
+# CONFIG_PACKAGE_luci-app-samba is not set
+CONFIG_PACKAGE_luci-app-samba4=y
+CONFIG_PACKAGE_luci-app-sqm=y
+# CONFIG_PACKAGE_luci-app-usb-printer is not set
+# CONFIG_PACKAGE_luci-app-wifischedule is not set
+# CONFIG_PACKAGE_luci-app-wol is not set
+# CONFIG_PACKAGE_luci-app-wrtbwmon is not set
+# CONFIG_PACKAGE_luci-app-xlnetacc is not set
+CONFIG_PACKAGE_luci-app-zerotier=y
+
+#
+# 4. Themes
+#
+# CONFIG_PACKAGE_luci-theme-argon is not set
+CONFIG_PACKAGE_luci-theme-bootstrap=y
+CONFIG_PACKAGE_luci-theme-material=y
+# CONFIG_PACKAGE_luci-theme-netgear is not set
+
+#
+# Firmware
+#
+CONFIG_PACKAGE_radeon-firmware=y
+CONFIG_PACKAGE_rt2800-usb-firmware=y
+CONFIG_PACKAGE_rt73-usb-firmware=y
+
+#
+# USB Support
+#
+CONFIG_PACKAGE_kmod-usb-net-rtl8150=y
+CONFIG_PACKAGE_kmod-usb-net-rtl8152=y
+
+#
+# Wireless Drivers
+#
+CONFIG_PACKAGE_kmod-rt2500-usb=y
+CONFIG_PACKAGE_kmod-rt2800-usb=y
+CONFIG_PACKAGE_kmod-rt2x00-usb=y
+CONFIG_PACKAGE_kmod-rt73-usb=y
+CONFIG_PACKAGE_kmod-rtlwifi-usb=y
