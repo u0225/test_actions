@@ -1,0 +1,222 @@
+#==========================================================
+# https://github.com/P3TERX/Actions-OpenWrt
+# Description: Build OpenWrt using GitHub Actions
+# Lisence: MIT
+# Author: P3TERX
+# Blog: https://p3terx.com
+#
+# https://github.com/KFERMercer/OpenWrt-CI
+#
+# https://github.com/1orz/My-action
+#
+# https://github.com/garypang13/Actions-OpenWrt-Nginx
+#
+#==========================================================
+
+name: OpenWrt_x86_64_Generic_full_drive
+
+on:
+  # release:
+  #   types: [published]
+  # watch:
+  #   types: [started]
+  #   paths:
+  #     - 'config/x86/64/.config'
+  #     - '.github/workflows/OpenWrt-x86_64-Generic.yml'
+  # push:
+  #   branches: 
+  #     - master
+  schedule:
+    - cron: 00 10 * * 6
+  # release:
+  #   types: [published]
+
+env:
+  REPO_URL: https://github.com/coolsnowwolf/lede
+  # REPO_URL: https://github.com/u0225/lede
+  REPO_BRANCH: master
+  TARGET: Openwrt_x86_64_Generic_full_drive
+  # CONFIG_FILE: config/x86/64/.config
+  DIY_SH: diy/diy.sh
+  FREE_UP_DISK: true
+  SSH_ACTIONS: false
+  UPLOAD_BIN_DIR: false
+  UPLOAD_FIRMWARE: true
+  UPLOAD_COWTRANSFER: false
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    if: github.event.repository.owner.id == github.event.sender.id
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+        with:
+          ref: master
+          fetch-depth: 1000000
+
+      - name: Space cleanup
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
+          sudo -E apt-get update
+          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          curl -fsSL https://raw.githubusercontent.com/u0225/actions-openwrt-lede/master/.bashrc >> ~/.bashrc
+          sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+          df -h
+
+      - name: Clone openwrt
+        run: |
+          git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
+          cd lede
+          sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
+          echo "src-git lienol https://github.com/u0225/psw200416" >> ./feeds.conf.default
+          # echo "src-git lienol https://github.com/u0225/Lienol-openwrt-package" >> ./feeds.conf.default
+
+      - name: Free up disk space
+        if: env.FREE_UP_DISK == 'true'
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo mkdir -p -m 777 lede/build_dir /mnt/lede/dl /mnt/lede/staging_dir /mnt/lede/build_dir /mnt/lede/build_dir/hostpkg /mnt/lede/build_dir/host
+          ln -s /mnt/lede/build_dir/hostpkg lede/build_dir/hostpkg
+          ln -s /mnt/lede/build_dir/host lede/build_dir/host
+          ln -s /mnt/lede/dl lede/dl
+          ln -s /mnt/lede/staging_dir lede/staging_dir
+          df -h
+
+      - name: Git clone themes and luci-app
+        run: |
+          cd lede/package
+          mkdir openwrt-packages
+          cd openwrt-packages
+          # git clone https://github.com/fw876/helloworld.git
+          # git clone https://github.com/Lienol/openwrt-package.git
+          # git clone https://github.com/u0225/Lienol-openwrt-package.git
+          git clone https://github.com/openwrt-develop/luci-theme-atmaterial.git
+          git clone https://github.com/Aslin-Ameng/luci-theme-Night.git
+          git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
+          git clone https://github.com/rufengsuixing/luci-app-autoipsetadder.git
+          git clone https://github.com/destan19/OpenAppFilter.git
+          git clone https://github.com/tty228/luci-app-serverchan.git
+          git clone https://github.com/vernesong/OpenClash.git
+          git clone https://github.com/u0225/luci-app-aliddns.git
+          git clone https://github.com/garypang13/luci-app-eqos.git
+          git clone https://github.com/u0225/luci-app-dnspod.git
+          git clone https://github.com/u0225/luci-app-smartdns.git
+          git clone https://github.com/u0225/smartdns.git
+
+      - name: Git pull Update feeds and install
+        run: |
+          cd lede
+          git pull
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          df -h
+
+      - name: Load helloworld configuration
+        id: helloworld
+        run: |
+          echo "::set-output name=helloworld::$(echo 'cat diy/2srplus >> lede/.config')"
+          # echo "::set-output name=helloworld::$(echo 'cat diy/psw >> lede/.config')"
+
+      - name: Set hello-world
+        id: hello
+        run: |
+          echo "::set-output name=hello::$(echo '2srplus')"
+          # echo "::set-output name=hello::$(echo 'psw')"
+
+      - name: Load custom configuration
+        run: |
+          rm -f lede/.config*
+          touch lede/.config
+          cat diy/x64 >> lede/.config
+          cat diy/Setting >> lede/.config
+          cat diy/drive >> lede/.config
+          cat diy/luci_app >> lede/.config
+          # cat diy/lite >> lede/.config
+          cat diy/samba4 >> lede/.config
+          # cat diy/samba36 >> lede/.config
+          # cat diy/mwan3 >> lede/.config
+          ${{steps.helloworld.outputs.helloworld}}
+          chmod +x $DIY_SH
+          cd lede
+          ../$DIY_SH
+          ./scripts/feeds install -a
+          make defconfig
+
+      - name: Make download
+        run: |
+          cd lede
+          make download -j8
+          find ./dl/ -size -1024c -exec rm -f {} \;
+          df -h
+
+      - name: Compile firmware
+        run: |
+          cd lede
+          make -j$(nproc) || make -j1 V=s
+          echo "======================="
+          echo "Space usage:"
+          echo "======================="
+          df -h
+          echo "======================="
+          du -h --max-depth=1 ./ --exclude=build_dir --exclude=bin
+          du -h --max-depth=1 ./build_dir
+          du -h --max-depth=1 ./bin
+
+      - name: Get current date
+        id: date
+        run: |
+          echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          echo "::set-output name=date1::$(date +'%y%m%d')"
+          echo "::set-output name=date2::$(date +'%Y-%m-%d_%H.%M')"
+          echo "::set-output name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
+
+      # - name: Upload entire bin directory
+      #   uses: actions/upload-artifact@master
+      #   if: always()
+      #   with:
+      #     name: ${{ env.TARGET }}_${{steps.hello.outputs.hello}}_bin_all_${{steps.date.outputs.date1}}
+      #     path: lede/bin
+
+      - name: Prepare ipk packages artifact
+        run: mkdir ./ipk && mkdir ./ipk/targets && cp -r ./lede/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./lede/bin/packages ./ipk
+
+      - name: Upload ipk packages artifact
+        uses: actions/upload-artifact@master
+        with:
+          name: ${{ env.TARGET }}_${{steps.hello.outputs.hello}}_ipk_packages_${{steps.date.outputs.date}}
+          path: ./ipk
+
+      # - name: Prepare artifact
+      #   run: find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+
+      # - name: Upload artifact
+      #   uses: actions/upload-artifact@master
+      #   with:
+      #     name: ${{ env.TARGET }}_${{steps.hello.outputs.hello}}_firmware_all_${{steps.date.outputs.date2}}
+      #     path: lede/bin/targets/
+
+      - name: Organize files
+        id: organize
+        if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+        run: |
+          mkdir firmware && find lede/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
+          cp lede/.config ./firmware/${{ env.TARGET }}_${{steps.hello.outputs.hello}}_${{steps.date.outputs.date1}}.config
+          cd firmware
+          echo "::set-env name=FIRMWARE::$PWD"
+          echo "::set-output name=status::success"
+
+      - name: Prepare Upload firmware artifact
+        uses: actions/upload-artifact@master
+        if: steps.organize.outputs.status == 'success' && !cancelled()
+        with:
+          name: ${{ env.TARGET }}_${{steps.hello.outputs.hello}}_firmware_${{steps.date.outputs.date}}
+          path: ${{ env.FIRMWARE }}
