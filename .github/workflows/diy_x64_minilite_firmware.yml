@@ -46,15 +46,16 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  build:
+  build_openwrt:
+    name: Build OpenWrt
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+
     steps:
       - name: Checkout
         uses: actions/checkout@master
         with:
           ref: master
-          fetch-depth: 1000000
 
       - name: Space cleanup
         env:
