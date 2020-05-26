@@ -37,15 +37,16 @@ env:
   TZ: Asia/Shanghai
 
 jobs:
-  build:
+  build_openwrt:
+    name: Build OpenWrt
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+
     steps:
       - name: Checkout
         uses: actions/checkout@master
         with:
           ref: master
-          fetch-depth: 1000000
 
       - name: Space cleanup
         env:
@@ -104,8 +105,9 @@ jobs:
       - name: Setting-armt
         run: |
           sudo mkdir -p -m 777 lede/target lede/target/linux lede/target/linux/ar71xx lede/target/linux/ar71xx/image lede/target/linux/ramips lede/target/linux/ramips/image lede/target/linux/ramips/dts
-          rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk && rm -f lede/target/linux/ramips/image/mt7620.mk && rm -f lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
-          cp ./setting_armt/r20up/tiny-tp-link.mk ./lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp ./setting_armt/r20up/mt7620.mk ./lede/target/linux/ramips/image/mt7620.mk && cp ./setting_armt/r20up/mt7620n_zbtlink_zbt-wr8305rt.dts ./lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
+          sudo rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk lede/target/linux/ramips/image/mt7620.mk lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
+          cp setting_armt/r20up/tiny-tp-link.mk lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp setting_armt/r20up/mt7620.mk lede/target/linux/ramips/image/mt7620.mk && cp setting_armt/r20up/mt7620n_zbtlink_zbt-wr8305rt.dts lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
+          sudo chmod 777 lede/target/linux/ar71xx/image/tiny-tp-link.mk lede/target/linux/ramips/image/mt7620.mk lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
 
       - name: Make download
         run: |
