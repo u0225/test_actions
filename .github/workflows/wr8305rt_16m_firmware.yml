@@ -104,8 +104,8 @@ jobs:
       - name: Setting-armt
         run: |
           sudo mkdir -p -m 777 lede/target lede/target/linux lede/target/linux/ar71xx lede/target/linux/ar71xx/image lede/target/linux/ramips lede/target/linux/ramips/image lede/target/linux/ramips/dts
-          rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk && rm -f lede/target/linux/ramips/image/mt7620.mk && rm -f lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
-          cp ./setting_armt/r20up/tiny-tp-link.mk ./lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp ./setting_armt/r20up/mt7620.mk ./lede/target/linux/ramips/image/mt7620.mk && cp ./setting_armt/r20up/ZBT-WR8305RT.dts ./lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
+          rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk && rm -f lede/target/linux/ramips/image/mt7620.mk && rm -f lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
+          cp ./setting_armt/r20up/tiny-tp-link.mk ./lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp ./setting_armt/r20up/mt7620.mk ./lede/target/linux/ramips/image/mt7620.mk && cp ./setting_armt/r20up/mt7620n_zbtlink_zbt-wr8305rt.dts ./lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
 
       - name: Make download
         run: |
