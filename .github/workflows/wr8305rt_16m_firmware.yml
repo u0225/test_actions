@@ -107,31 +107,6 @@ jobs:
           ./scripts/feeds install -a
           make defconfig
 
-      - name: Setting armtset
-        id: armt
-        run: |
-          echo "::set-output name=armt::$(echo 'tiny-tp-link.mk')"
-          echo "::set-output name=armt1::$(echo 'mt7620.mk')"
-          echo "::set-output name=armt2::$(echo 'ZBT-WR8305RT.dts')"
-          # echo "::set-output name=armt2::$(echo 'mt7620n_zbtlink_zbt-wr8305rt.dts')"
-
-      - name: Setting bran
-        id: bran
-        run: |
-          # echo "::set-output name=bran::$(echo '../setting_armt/master')"
-          # echo "::set-output name=bran::$(echo '../setting_armt/r8')"
-          echo "::set-output name=bran::$(echo '../setting_armt/r9')"
-          # echo "::set-output name=bran::$(echo '../setting_armt/r20')"
-
-      - name: Setting armt
-        run: |
-          cd lede
-          sudo mkdir -p -m 777 ./target ./target/linux ./target/linux/ar71xx ./target/linux/ar71xx/image ./target/linux/ramips ./target/linux/ramips/image ./target/linux/ramips/dts
-          sudo rm -f ./target/linux/ar71xx/image/tiny-tp-link.mk ./target/linux/ramips/image/mt7620.mk ./target/linux/ramips/dts/ZBT-WR8305RT.dts ./target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
-          cp ${{steps.bran.outputs.bran}}/${{steps.armt.outputs.armt}} ./target/linux/ar71xx/image/${{steps.armt.outputs.armt}}
-          cp ${{steps.bran.outputs.bran}}/${{steps.armt.outputs.armt1}} ./target/linux/ramips/image/${{steps.armt.outputs.armt1}}
-          cp ${{steps.bran.outputs.bran}}/${{steps.armt.outputs.armt2}} ./target/linux/ramips/dts/${{steps.armt.outputs.armt2}}
-
       - name: Make download
         run: |
           cd lede
