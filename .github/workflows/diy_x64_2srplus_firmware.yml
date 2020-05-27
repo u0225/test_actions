@@ -184,7 +184,7 @@ jobs:
       #   uses: actions/upload-artifact@master
       #   if: always()
       #   with:
-      #     name: ${{ env.TARGET }}_${{steps.hello.outputs.hello}}_bin_all_${{steps.date.outputs.date1}}
+      #     name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.hello.outputs.hello}}_bin_all_${{steps.date.outputs.date1}}
       #     path: lede/bin
 
       - name: Prepare ipk packages artifact
@@ -193,7 +193,7 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{steps.hello.outputs.hello}}_ipk_packages_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.hello.outputs.hello}}_ipk_packages_${{steps.date.outputs.date}}
           path: ./ipk
 
       # - name: Prepare artifact
@@ -202,7 +202,7 @@ jobs:
       # - name: Upload artifact
       #   uses: actions/upload-artifact@master
       #   with:
-      #     name: ${{ env.TARGET }}_${{steps.hello.outputs.hello}}_firmware_all_${{steps.date.outputs.date2}}
+      #     name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.hello.outputs.hello}}_firmware_all_${{steps.date.outputs.date2}}
       #     path: lede/bin/targets/
 
       - name: Organize files
@@ -210,7 +210,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find lede/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp lede/.config ./firmware/${{ env.TARGET }}_${{steps.hello.outputs.hello}}_${{steps.date.outputs.date1}}.config
+          cp lede/.config ./firmware/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.hello.outputs.hello}}_${{steps.date.outputs.date1}}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -219,5 +219,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ env.TARGET }}_${{steps.hello.outputs.hello}}_firmware_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.hello.outputs.hello}}_firmware_${{steps.date.outputs.date}}
           path: ${{ env.FIRMWARE }}

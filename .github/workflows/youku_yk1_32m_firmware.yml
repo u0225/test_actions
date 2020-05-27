@@ -100,7 +100,7 @@ jobs:
           touch lede/.config
           cat armt/youku_yk1_32m >> lede/.config
           # cat armt/armt_luci_app_16m >> lede/.config
-          cat armt/armt_luci_app_16m_default >> lede/.config
+          # cat armt/armt_luci_app_16m_default >> lede/.config
           chmod +x $DIY_SH
           cd lede
           ../$DIY_SH
@@ -167,7 +167,7 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{steps.date.outputs.date1}}.config
+          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.date.outputs.date1}}.config
           find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       - name: Upload artifact
