@@ -99,7 +99,7 @@ jobs:
           rm -f lede/.config*
           touch lede/.config
           cat armt/miwifi_mini_16m >> lede/.config
-          # cat armt/armt_luci_app_16m >> lede/.config
+          cat armt/armt_luci_app_16m >> lede/.config
           # cat armt/armt_luci_app_16m_default >> lede/.config
           chmod +x $DIY_SH
           cd lede
@@ -107,26 +107,30 @@ jobs:
           ./scripts/feeds install -a
           make defconfig
 
-      # - name: Setting-armt
-      #   run: |
-      #     sudo mkdir -p -m 777 lede/target lede/target/linux lede/target/linux/ar71xx lede/target/linux/ar71xx/image lede/target/linux/ramips lede/target/linux/ramips/image lede/target/linux/ramips/dts
-      #     sudo rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk lede/target/linux/ramips/image/mt7620.mk lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
-      #     cp setting_armt/r8/tiny-tp-link.mk lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp setting_armt/r8/mt7620.mk lede/target/linux/ramips/image/mt7620.mk && cp setting_armt/r8/ZBT-WR8305RT.dts lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
-      #     sudo chmod 777 lede/target/linux/ar71xx/image/tiny-tp-link.mk lede/target/linux/ramips/image/mt7620.mk lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
-
-      - name: Setting-armt
+      - name: Setting armtset
+        id: armt
         run: |
-          sudo mkdir -p -m 777 lede/target lede/target/linux lede/target/linux/ar71xx lede/target/linux/ar71xx/image lede/target/linux/ramips lede/target/linux/ramips/image lede/target/linux/ramips/dts
-          sudo rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk lede/target/linux/ramips/image/mt7620.mk lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
-          cp setting_armt/r9up/tiny-tp-link.mk lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp setting_armt/r9up/mt7620.mk lede/target/linux/ramips/image/mt7620.mk && cp setting_armt/r9up/ZBT-WR8305RT.dts lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
-          sudo chmod 777 lede/target/linux/ar71xx/image/tiny-tp-link.mk lede/target/linux/ramips/image/mt7620.mk lede/target/linux/ramips/dts/ZBT-WR8305RT.dts
+          echo "::set-output name=armt::$(echo 'tiny-tp-link.mk')"
+          echo "::set-output name=armt1::$(echo 'mt7620.mk')"
+          echo "::set-output name=armt2::$(echo 'ZBT-WR8305RT.dts')"
+          # echo "::set-output name=armt2::$(echo 'mt7620n_zbtlink_zbt-wr8305rt.dts')"
 
-      # - name: Setting-armt
-      #   run: |
-      #     sudo mkdir -p -m 777 lede/target lede/target/linux lede/target/linux/ar71xx lede/target/linux/ar71xx/image lede/target/linux/ramips lede/target/linux/ramips/image lede/target/linux/ramips/dts
-      #     sudo rm -f lede/target/linux/ar71xx/image/tiny-tp-link.mk lede/target/linux/ramips/image/mt7620.mk lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
-      #     cp setting_armt/r20up/tiny-tp-link.mk lede/target/linux/ar71xx/image/tiny-tp-link.mk && cp setting_armt/r20up/mt7620.mk lede/target/linux/ramips/image/mt7620.mk && cp setting_armt/r20up/mt7620n_zbtlink_zbt-wr8305rt.dts lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
-      #     sudo chmod 777 lede/target/linux/ar71xx/image/tiny-tp-link.mk lede/target/linux/ramips/image/mt7620.mk lede/target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
+      - name: Setting bran
+        id: bran
+        run: |
+          # echo "::set-output name=bran::$(echo 'setting_armt/master')"
+          # echo "::set-output name=bran::$(echo 'setting_armt/r8')"
+          echo "::set-output name=bran::$(echo 'setting_armt/r9')"
+          # echo "::set-output name=bran::$(echo 'setting_armt/r20')"
+
+      - name: Setting armt
+        run: |
+          cd lede
+          sudo mkdir -p -m 777 ./target ./target/linux ./target/linux/ar71xx ./target/linux/ar71xx/image ./target/linux/ramips ./target/linux/ramips/image ./target/linux/ramips/dts
+          sudo rm -f ./target/linux/ar71xx/image/tiny-tp-link.mk ./target/linux/ramips/image/mt7620.mk ./target/linux/ramips/dts/ZBT-WR8305RT.dts ./target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
+          cp ${{steps.bran.outputs.bran}}/${{steps.armt.outputs.armt}} ./target/linux/ar71xx/image/${{steps.armt.outputs.armt}}
+          cp ${{steps.bran.outputs.bran}}/${{steps.armt.outputs.armt1}} ./target/linux/ramips/image/${{steps.armt.outputs.armt1}}
+          cp ${{steps.bran.outputs.bran}}/${{steps.armt.outputs.armt2}} ./target/linux/ramips/dts/${{steps.armt.outputs.armt2}}
 
       - name: Make download
         run: |
