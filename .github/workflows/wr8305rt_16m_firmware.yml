@@ -118,10 +118,10 @@ jobs:
       - name: Setting bran
         id: bran
         run: |
-          # echo "::set-output name=bran::$(echo 'setting_armt/master')"
-          # echo "::set-output name=bran::$(echo 'setting_armt/r8')"
-          echo "::set-output name=bran::$(echo 'setting_armt/r9')"
-          # echo "::set-output name=bran::$(echo 'setting_armt/r20')"
+          # echo "::set-output name=bran::$(echo '../setting_armt/master')"
+          # echo "::set-output name=bran::$(echo '../setting_armt/r8')"
+          echo "::set-output name=bran::$(echo '../setting_armt/r9')"
+          # echo "::set-output name=bran::$(echo '../setting_armt/r20')"
 
       - name: Setting armt
         run: |
