@@ -33,6 +33,7 @@ env:
   # REPO_BRANCH: master
   TARGET: Openwrt_wdr3320-16m
   DIY_SH: armt/armt_diy.sh
+  # DIY_SH: armt/armt_diy_r20.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -98,8 +99,8 @@ jobs:
           rm -f lede/.config*
           touch lede/.config
           cat armt/wdr3320_16m >> lede/.config
-          cat armt/armt_luci_app_16m >> lede/.config
-          # cat armt/armt_Setting >> lede/.config
+          # cat armt/armt_luci_app_16m >> lede/.config
+          cat armt/armt_luci_app_16m_default >> lede/.config
           chmod +x $DIY_SH
           cd lede
           ../$DIY_SH
