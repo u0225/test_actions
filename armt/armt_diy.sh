@@ -26,4 +26,4 @@ sed -i '/define Device\/tl-wdr3320-v2/{n;d}' target/linux/ar71xx/image/tiny-tp-l
 sed -i '/define Device\/tl-wdr3320-v2/a\  $(Device/tplink-16mlzma)' target/linux/ar71xx/image/tiny-tp-link.mk
 sed -i '/  DTS := ZBT-WR8305RT/a\  IMAGE_SIZE := $(ralink_default_fw_size_16M)' target/linux/ramips/image/mt7620.mk
 sed -i 's/reg = <0x50000 0x7b0000>;/reg = <0x50000 0xfb0000>;/g' target/linux/ramips/dts/ZBT-WR8305RT.dts
-sed -i 's/reg = <0x50000 0x7b0000>;/reg = <0x50000 0xfb0000>;/g' target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
+# sed -i 's/reg = <0x50000 0x7b0000>;/reg = <0x50000 0xfb0000>;/g' target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts
