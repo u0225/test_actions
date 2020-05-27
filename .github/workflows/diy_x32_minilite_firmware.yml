@@ -18,8 +18,8 @@ name: OpenWrt_x86_32_Generic_minilite_drive
 on:
   # release:
   #   types: [published]
-  watch:
-    types: [started]
+  # watch:
+  #   types: [started]
   #   paths:
   #     - 'config/x86/32/.config'
   #     - '.github/workflows/OpenWrt-x86_64-Generic.yml'
