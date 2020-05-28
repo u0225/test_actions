@@ -33,6 +33,7 @@ env:
   # REPO_BRANCH: r20.5.20
   # REPO_BRANCH: master
   TARGET: Openwrt_wr8305rt-16m
+  CONFIG_FILE: config/r9.10.10/zbt-wr8305rt.config
   DIY_SH: armt/armt_diy.sh
   # DIY_SH: armt/armt_diy_r20.sh
   FREE_UP_DISK: true
@@ -46,8 +47,8 @@ jobs:
   build_openwrt:
     name: Build OpenWrt
     if: github.event.repository.owner.id == github.event.sender.id
-    # runs-on: ubuntu-18.04
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
+    # runs-on: ubuntu-16.04
 
     steps:
       - name: Checkout
@@ -105,11 +106,12 @@ jobs:
 
       - name: Load custom configuration
         run: |
-          rm -f lede/.config*
-          touch lede/.config
-          cat armt/wr8305rt_16m >> lede/.config
+          # rm -f lede/.config*
+          # touch lede/.config
+          # cat armt/wr8305rt_16m >> lede/.config
           # cat armt/armt_luci_app_16m >> lede/.config
           # cat armt/armt_luci_app_16m_default >> lede/.config
+          cp $CONFIG_FILE lede/.config
           chmod +x $DIY_SH
           cd lede
           ../$DIY_SH
