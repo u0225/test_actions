@@ -84,15 +84,14 @@ jobs:
           # chmod -R 775 setting_armt
           cd lede
           sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          echo "src-git lienol https://github.com/u0225/psw200416" >> ./feeds.conf.default
-          # echo "src-git lienol https://github.com/u0225/Lienol-openwrt-package" >> ./feeds.conf.default
+          # echo "src-git lienol https://github.com/u0225/psw200416" >> ./feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo mkdir -p -m 777 lede/build_dir /mnt/lede/dl /mnt/lede/staging_dir /mnt/lede/build_dir /mnt/lede/build_dir/hostpkg /mnt/lede/build_dir/host
+          sudo mkdir -p -m 777 lede/build_dir /mnt/lede/dl /mnt/lede/staging_dir /mnt/lede/build_dir/hostpkg /mnt/lede/build_dir/host
           ln -s /mnt/lede/build_dir/hostpkg lede/build_dir/hostpkg
           ln -s /mnt/lede/build_dir/host lede/build_dir/host
           ln -s /mnt/lede/dl lede/dl
