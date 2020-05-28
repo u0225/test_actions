@@ -25,16 +25,17 @@ env:
   REPO_URL: https://github.com/u0225/lede
   # REPO_URL: https://github.com/u0225/lede_r8
   # REPO_URL: https://github.com/u0225/lede_r9
-  # REPO_BRANCH: r8.1.12
+  REPO_BRANCH: r9.1.1
   # REPO_BRANCH: r9.3.7
   # REPO_BRANCH: r9.8.17
   # REPO_BRANCH: 20200408
-  REPO_BRANCH: 20200416
+  # REPO_BRANCH: 20200416
   # REPO_BRANCH: r20.5.20
   # REPO_BRANCH: master
   TARGET: Openwrt_miwifi-mini-16m
-  # DIY_SH: armt/armt_diy.sh
-  DIY_SH: armt/armt_diy_r20.sh
+  VERSION: V-$REPO_BRANCH
+  DIY_SH: armt/armt_diy.sh
+  # DIY_SH: armt/armt_diy_r20.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -147,16 +148,16 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_ipk_packages_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.VERSION }}_ipk_packages_${{steps.date.outputs.date}}
           path: ./ipk
 
       - name: Prepare artifact
         run: |
-          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.date.outputs.date1}}.config
+          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.VERSION }}_${{steps.date.outputs.date1}}.config
           find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_firmware_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.VERSION }}_firmware_${{steps.date.outputs.date}}
           path: lede/bin/targets/
