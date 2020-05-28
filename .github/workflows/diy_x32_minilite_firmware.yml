@@ -18,8 +18,8 @@ name: OpenWrt_x86_32_Generic_minilite_drive
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   #   paths:
   #     - 'config/x86/32/.config'
   #     - '.github/workflows/OpenWrt-x86_64-Generic.yml'
@@ -84,8 +84,9 @@ jobs:
           # chmod -R 775 setting_armt
           cd lede
           sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          echo "src-git lienol https://github.com/u0225/psw200416" >> ./feeds.conf.default
-          # echo "src-git lienol https://github.com/u0225/Lienol-openwrt-package" >> ./feeds.conf.default
+          sudo mkdir -p -m 775 package package/psw
+          cp -r ../psw package
+          # echo "src-git lienol https://github.com/u0225/psw200416" >> ./feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
