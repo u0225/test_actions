@@ -72,6 +72,7 @@ jobs:
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
+          chmod -R 775 lede
           # cd lede
           # sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
 
