@@ -30,8 +30,8 @@ env:
   # REPO_BRANCH: r9.8.17
   # REPO_BRANCH: 20200408
   # REPO_BRANCH: 20200416
-  REPO_BRANCH: r20.5.20
-  # REPO_BRANCH: master
+  # REPO_BRANCH: r20.5.20
+  REPO_BRANCH: master
   TARGET: Openwrt_youku-yk1-32m
   # DIY_SH: armt/armt_diy.sh
   DIY_SH: armt/armt_diy_r20.sh
