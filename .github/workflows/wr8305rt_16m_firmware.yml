@@ -33,7 +33,6 @@ env:
   # REPO_BRANCH: r20.5.20
   # REPO_BRANCH: master
   TARGET: Openwrt_wr8305rt-16m
-  VERSION: V-$REPO_BRANCH
   DIY_SH: armt/armt_diy.sh
   # DIY_SH: armt/armt_diy_r20.sh
   FREE_UP_DISK: true
@@ -47,7 +46,8 @@ jobs:
   build_openwrt:
     name: Build OpenWrt
     if: github.event.repository.owner.id == github.event.sender.id
-    runs-on: ubuntu-18.04
+    # runs-on: ubuntu-18.04
+    runs-on: ubuntu-16.04
 
     steps:
       - name: Checkout
@@ -63,7 +63,8 @@ jobs:
           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
           sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
           sudo -E apt-get update
-          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget
+          # sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget
+          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
           curl -fsSL https://raw.githubusercontent.com/u0225/openwrt_lede_actions/master/.bashrc >> ~/.bashrc
@@ -106,7 +107,7 @@ jobs:
           rm -f lede/.config*
           touch lede/.config
           cat armt/wr8305rt_16m >> lede/.config
-          cat armt/armt_luci_app_16m >> lede/.config
+          # cat armt/armt_luci_app_16m >> lede/.config
           # cat armt/armt_luci_app_16m_default >> lede/.config
           chmod +x $DIY_SH
           cd lede
@@ -148,16 +149,16 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.VERSION }}_ipk_packages_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_ipk_packages_${{steps.date.outputs.date}}
           path: ./ipk
 
       - name: Prepare artifact
         run: |
-          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.VERSION }}_${{steps.date.outputs.date1}}.config
+          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.date.outputs.date1}}.config
           find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.VERSION }}_firmware_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_firmware_${{steps.date.outputs.date}}
           path: lede/bin/targets/
