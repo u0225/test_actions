@@ -16,8 +16,8 @@
 name: OpenWrt_miwifi-mini-16m_firmware
 
 on:
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -89,7 +89,7 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo mkdir -p -m 777 lede/build_dir /mnt/lede/dl /mnt/lede/staging_dir /mnt/lede/build_dir /mnt/lede/build_dir/hostpkg /mnt/lede/build_dir/host
+          sudo mkdir -p -m 777 lede/build_dir /mnt/lede/dl /mnt/lede/staging_dir /mnt/lede/build_dir/hostpkg /mnt/lede/build_dir/host
           ln -s /mnt/lede/build_dir/hostpkg lede/build_dir/hostpkg
           ln -s /mnt/lede/build_dir/host lede/build_dir/host
           ln -s /mnt/lede/dl lede/dl

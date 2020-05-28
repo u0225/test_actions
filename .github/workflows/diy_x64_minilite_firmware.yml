@@ -77,7 +77,7 @@ jobs:
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
-          sudo mkdir -p lede/package/psw
+          sudo mkdir -p -m 775 lede/package/psw
           cp -r psw lede/package
           chmod -R 775 ./
           # chmod -R 775 lede

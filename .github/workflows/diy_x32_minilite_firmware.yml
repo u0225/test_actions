@@ -78,7 +78,7 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          sudo mkdir -p lede/package/psw
+          sudo mkdir -p -m 775 lede/package/psw
           cp -r psw lede/package
           chmod -R 775 ./
           # chmod -R 775 lede
