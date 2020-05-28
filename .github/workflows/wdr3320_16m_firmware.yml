@@ -27,13 +27,14 @@ env:
   # REPO_URL: https://github.com/u0225/lede-R8.1.12_181212
   # REPO_BRANCH: r8.1.12
   # REPO_BRANCH: r9.3.7
-  REPO_BRANCH: r9.8.17
+  # REPO_BRANCH: r9.8.17
   # REPO_BRANCH: 20200408
   # REPO_BRANCH: 20200416
+  REPO_BRANCH: r20.5.20
   # REPO_BRANCH: master
   TARGET: Openwrt_wdr3320-16m
-  DIY_SH: armt/armt_diy.sh
-  # DIY_SH: armt/armt_diy_r20.sh
+  # DIY_SH: armt/armt_diy.sh
+  DIY_SH: armt/armt_diy_r20.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
