@@ -22,19 +22,19 @@ on:
   #   - cron: 00 10 * * 6
 
 env:
-  # REPO_URL: https://github.com/u0225/lede
-  REPO_URL: https://github.com/u0225/lede_r8
+  REPO_URL: https://github.com/u0225/lede
+  # REPO_URL: https://github.com/u0225/lede_r8
   # REPO_URL: https://github.com/u0225/lede_r9
   # REPO_BRANCH: r8.1.12
   # REPO_BRANCH: r9.3.7
   # REPO_BRANCH: r9.8.17
   # REPO_BRANCH: 20200408
-  # REPO_BRANCH: 20200416
+  REPO_BRANCH: 20200416
   # REPO_BRANCH: r20.5.20
-  REPO_BRANCH: master
+  # REPO_BRANCH: master
   TARGET: Openwrt_wr8305rt-16m
-  DIY_SH: armt/armt_diy.sh
-  # DIY_SH: armt/armt_diy_r20.sh
+  # DIY_SH: armt/armt_diy.sh
+  DIY_SH: armt/armt_diy_r20.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -72,10 +72,11 @@ jobs:
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
-          chmod -R 775 lede
-          chmod -R 775 diy
-          chmod -R 775 armt
-          chmod -R 775 setting_armt
+          chmod -R 775 ./
+          # chmod -R 775 lede
+          # chmod -R 775 diy
+          # chmod -R 775 armt
+          # chmod -R 775 setting_armt
           # cd lede
           # sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
 
