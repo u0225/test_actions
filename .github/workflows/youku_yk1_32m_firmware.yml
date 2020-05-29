@@ -23,19 +23,18 @@ on:
 
 env:
   REPO_URL: https://github.com/u0225/lede
-  # REPO_URL: https://github.com/u0225/lede_r8
-  # REPO_URL: https://github.com/u0225/lede_r9
-  REPO_BRANCH: r9.10.10
-  # REPO_BRANCH: r9.3.7
+  # REPO_BRANCH: master
+  REPO_BRANCH: r8.1.12
   # REPO_BRANCH: r9.8.17
+  # REPO_BRANCH: r9.10.10
   # REPO_BRANCH: 20200408
   # REPO_BRANCH: 20200416
   # REPO_BRANCH: r20.5.20
-  # REPO_BRANCH: master
   TARGET: Openwrt_youku-yk1-32m
   CONFIG_FILE: config/r9.10.10/youku-yk1.config
-  DIY_SH: armt/armt_diy.sh
-  # DIY_SH: armt/armt_diy_r20.sh
+  SET_SH: armt/armt_set.sh
+  R89_SH: armt/r89.sh
+  R20_SH: armt/r20.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -77,12 +76,9 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
-          # chmod -R 775 lede
-          # chmod -R 775 diy
-          # chmod -R 775 armt
-          # chmod -R 775 setting_armt
           # cd lede
           # sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
+          # echo "src-git lienol https://github.com/u0225/psw_single" >> ./feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -106,15 +102,18 @@ jobs:
 
       - name: Load custom configuration
         run: |
-          # rm -f lede/.config*
-          # touch lede/.config
-          # cat armt/youku_yk1_32m >> lede/.config
-          # cat armt/armt_luci_app_16m >> lede/.config
+          rm -f lede/.config*
+          touch lede/.config
+          # chmod +x $SET_SH
+          # chmod +x $R89_SH
+          # chmod +x $R20_SH
+          $R89_SH
+          # $R20_SH
+          cat armt/youku_yk1_32m >> lede/.config
+          cat armt/armt_luci_app_16m >> lede/.config
           # cat armt/armt_luci_app_16m_default >> lede/.config
-          cp $CONFIG_FILE lede/.config
-          chmod +x $DIY_SH
           cd lede
-          ../$DIY_SH
+          ../$SET_SH
           ./scripts/feeds install -a
           make defconfig
 

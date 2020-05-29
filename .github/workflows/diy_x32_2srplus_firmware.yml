@@ -36,7 +36,7 @@ env:
   # REPO_URL: https://github.com/u0225/lede
   REPO_BRANCH: master
   TARGET: Openwrt_x86_32_Generic_full_drive
-  # CONFIG_FILE: config/x86/32/.config
+  CONFIG_FILE: config/.config
   DIY_SH: diy/diy.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
@@ -78,13 +78,9 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
-          # chmod -R 775 lede
-          # chmod -R 775 diy
-          # chmod -R 775 armt
-          # chmod -R 775 setting_armt
           cd lede
           sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          # echo "src-git lienol https://github.com/u0225/psw200416" >> ./feeds.conf.default
+          echo "src-git lienol https://github.com/u0225/psw_single" >> ./feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'

@@ -36,7 +36,7 @@ env:
   # REPO_URL: https://github.com/u0225/lede
   REPO_BRANCH: master
   TARGET: Openwrt_x86_32_Generic_minilite_drive
-  # CONFIG_FILE: config/x86/32/.config
+  CONFIG_FILE: config/.config
   DIY_SH: diy/diy.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
@@ -77,16 +77,10 @@ jobs:
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
-          sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          sudo mkdir -p -m 775 lede/package/psw
-          cp -r psw lede/package
           chmod -R 775 ./
-          # chmod -R 775 lede
-          # chmod -R 775 diy
-          # chmod -R 775 armt
-          # chmod -R 775 setting_armt
           cd lede
-          # echo "src-git lienol https://github.com/u0225/psw200416" >> ./feeds.conf.default
+          sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
+          echo "src-git lienol https://github.com/u0225/psw_single" >> ./feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
