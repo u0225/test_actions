@@ -2,6 +2,7 @@
 #
 # vps_psw
 #
+cd diy
 sed -i "s/# CONFIG_PACKAGE_luci-app-passwall is not set/CONFIG_PACKAGE_luci-app-passwall=y/g" vps
 sed -i "s/# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ipt2socks is not set/CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ipt2socks=y/g" vps
 sed -i "s/# CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks is not set/CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks=y/g" vps

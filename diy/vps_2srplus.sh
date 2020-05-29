@@ -2,6 +2,7 @@
 #
 # vps_2srplus
 #
+cd diy
 sed -i "s/# CONFIG_PACKAGE_luci-app-ssr-plus is not set/CONFIG_PACKAGE_luci-app-ssr-plus=y/g" vps
 sed -i "s/# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin is not set/CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin=y/g" vps
 sed -i "s/# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray is not set/CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y/g" vps

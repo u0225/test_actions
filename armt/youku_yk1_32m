@@ -3,4 +3,3 @@
 #
 CONFIG_TARGET_ramips=y
 CONFIG_TARGET_ramips_mt7620=y
-CONFIG_TARGET_ramips_mt7620_DEVICE_youku-yk1=y

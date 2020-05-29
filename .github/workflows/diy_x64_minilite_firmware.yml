@@ -87,7 +87,7 @@ jobs:
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
           cd lede
-          cp ${{ env.FEEDS_FILE }} feeds.conf.default
+          cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
           # echo "src-git lienol https://github.com/u0225/psw_single" >> ./feeds.conf.default
 
