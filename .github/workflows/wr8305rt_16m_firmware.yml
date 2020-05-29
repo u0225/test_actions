@@ -30,8 +30,16 @@ env:
   # REPO_BRANCH: 20200408
   # REPO_BRANCH: 20200416
   # REPO_BRANCH: r20.5.20
+  VPS_X86_SH: diy/vps_x86.sh
+  VPS_ARM_SH: diy/vps_arm.sh
+  VPS_PSW_SH: diy/vps_psw.sh
+  VPS_2SRPLUS_SH: diy/vps_2srplus.sh
+  # VPS_S: 2SRPlus
+  VPS_S: PSW
   TARGET: Openwrt_wr8305rt-16m
-  CONFIG_FILE: config/r9.10.10/zbt-wr8305rt.config
+  CONFIG_FILE: config/.config
+  FEEDS_FILE: diy/feeds.conf.default
+  VPS: diy/vps
   SET_SH: armt/armt_set.sh
   R89_SH: armt/r89.sh
   R20_SH: armt/r20.sh
@@ -63,8 +71,8 @@ jobs:
           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
           sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
           sudo -E apt-get update
-          # sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget
-          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint
+          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget
+          # sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint
           # sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
@@ -76,9 +84,10 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
-          # cd lede
+          cd lede
+          # cp ${{ env.FEEDS_FILE }} feeds.conf.default
           # sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          # echo "src-git lienol https://github.com/u0225/psw_single" >> ./feeds.conf.default
+          echo "src-git lienol https://github.com/u0225/psw_single" >> ./feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -104,14 +113,16 @@ jobs:
         run: |
           rm -f lede/.config*
           touch lede/.config
-          # chmod +x $SET_SH
-          # chmod +x $R89_SH
-          # chmod +x $R20_SH
           $R89_SH
           # $R20_SH
+          # $VPS_X86_SH
+          $VPS_ARM_SH
+          $VPS_PSW_SH
+          # $VPS_2SRPLUS_SH
           cat armt/wr8305rt_16m >> lede/.config
           cat armt/armt_luci_app_16m >> lede/.config
           # cat armt/armt_luci_app_16m_default >> lede/.config
+          cat ${{ env.VPS }} >> lede/.config
           cd lede
           ../$SET_SH
           ./scripts/feeds install -a
@@ -151,16 +162,16 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_ipk_packages_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk_packages_${{steps.date.outputs.date}}
           path: ./ipk
 
       - name: Prepare artifact
         run: |
-          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{steps.date.outputs.date1}}.config
+          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_${{steps.date.outputs.date1}}.config
           find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_firmware_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_${{steps.date.outputs.date}}
           path: lede/bin/targets/
