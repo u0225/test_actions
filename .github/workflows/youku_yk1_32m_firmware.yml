@@ -22,28 +22,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  REPO_URL: https://github.com/u0225/lede
-  # REPO_BRANCH: master
-  REPO_BRANCH: r8.1.12
-  # REPO_BRANCH: r9.8.17
-  # REPO_BRANCH: r9.10.10
-  # REPO_BRANCH: 20200408
-  # REPO_BRANCH: 20200416
-  # REPO_BRANCH: r20.5.20
-  VPS_X86_SH: diy/vps_x86.sh
-  VPS_ARM_SH: diy/vps_arm.sh
-  VPS_PSW_SH: diy/vps_psw.sh
-  VPS_2SRPLUS_SH: diy/vps_2srplus.sh
-  # VPS_S: 2SRPlus
-  VPS_S: PSW
   TARGET: Openwrt_youku-yk1-32m
-  CONFIG_FILE: config/.config
-  FEEDS_FILE: diy/feeds.conf.default
-  VPS: diy/vps
-  SET_SH: armt/armt_set.sh
-  R89_SH: armt/r89.sh
-  R20_SH: armt/r20.sh
-  R20_ABOVE_SH: armt/r20_20200416_above.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -64,6 +43,19 @@ jobs:
         with:
           ref: master
 
+      - name: Load Settings.ini
+        run: |
+          source "${GITHUB_WORKSPACE}/setenv-arm.ini"
+          echo "::set-env name=REPO_URL_C::${REPO_URL_C}"
+          echo "::set-env name=REPO_URL_U::${REPO_URL_U}"
+          echo "::set-env name=REPO_BRANCH::${REPO_BRANCH}"
+          echo "::set-env name=CONFIG_FILE::${CONFIG_FILE}"
+          echo "::set-env name=VPS_S::${VPS_S}"
+          echo "::set-env name=FEEDS_FILE::${FEEDS_FILE}"
+          echo "::set-env name=VPS::${VPS}"
+          echo "::set-env name=SET_SH::${SET_SH}"
+          echo "::set-env name=DIY_SH::${DIY_SH}"
+
       - name: Space cleanup
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -83,9 +75,20 @@ jobs:
 
       - name: Clone openwrt
         run: |
-          git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
+          git clone --depth 1 $REPO_URL_U -b $REPO_BRANCH lede
           chmod -R 775 ./
-          cp ${{ env.FEEDS_FILE }} lede/feeds.conf.default
+          cd lede
+          cp ../${{ env.FEEDS_FILE }} feeds.conf.default
+          chmod -R 775 ../
+
+      - name: run sh
+        run: |
+          cd vps
+          vps.ok.sh
+          cd ..
+          cd armt
+          arm-branch.sh
+          $SET_SH
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -109,22 +112,12 @@ jobs:
 
       - name: Load custom configuration
         run: |
-          rm -f lede/.config*
-          touch lede/.config
-          $R89_SH
-          # $R20_SH
-          # 下面这项为r20.5.20或者是20200416之后源码使用，之前的源码不要选
-          # $R20_ABOVE_SH
-          # $VPS_X86_SH
-          $VPS_ARM_SH
-          $VPS_PSW_SH
-          # $VPS_2SRPLUS_SH
-          cat armt/youku_yk1_32m >> lede/.config
-          cat armt/armt_luci_app_16m >> lede/.config
-          # cat armt/armt_luci_app_16m_default >> lede/.config
-          cat ${{ env.VPS }} >> lede/.config
           cd lede
-          ../$SET_SH
+          rm -f .config*
+          touch .config
+          cat ../armt/youku-yk1-32m >> .config
+          cat ../armt/armt-luci-app_16m >> .config
+          cat ../${{ env.VPS }} >> .config
           ./scripts/feeds install -a
           make defconfig
 
@@ -151,10 +144,10 @@ jobs:
       - name: Get current date
         id: date
         run: |
-          echo "::set-output name=date::$(date +'%Y-%m-%d')"
-          echo "::set-output name=date1::$(date +'%y%m%d')"
-          echo "::set-output name=date2::$(date +'%Y-%m-%d_%H.%M')"
-          echo "::set-output name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
+          echo "::set-env name=date::$(date +'%Y-%m-%d')"
+          echo "::set-env name=date1::$(date +'%y%m%d')"
+          echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
+          echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
 
       - name: Prepare ipk packages artifact
         run: mkdir ./ipk && mkdir ./ipk/targets && cp -r ./lede/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./lede/bin/packages ./ipk
@@ -162,16 +155,16 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk_packages_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk_packages_${{ env.date }}
           path: ./ipk
 
       - name: Prepare artifact
         run: |
-          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_${{steps.date.outputs.date1}}.config
+          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_${{ env.date1 }}.config
           find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_${{ env.date }}
           path: lede/bin/targets/

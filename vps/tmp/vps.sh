@@ -1,14 +1,27 @@
+#!/bin/bash
+#
+# vps_x86
+#
+
+cd diy
+# cp vps_x86 vps
+
+cat >> vps <<EOF
+
+#
+# vps.config
+#
 
 #
 # ssr-plus
 #
-CONFIG_PACKAGE_luci-app-ssr-plus=y
+# CONFIG_PACKAGE_luci-app-ssr-plus is not set
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin is not set
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray is not set
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan is not set
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2 is not set
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun is not set
-CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=y
+# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server is not set
 
 #
 # passwall
@@ -33,3 +46,4 @@ CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=y
 # CONFIG_PACKAGE_luci-app-passwall_INCLUDE_dns2socks is not set
 # CONFIG_PACKAGE_luci-app-passwall_INCLUDE_v2ray-plugin is not set
 # CONFIG_PACKAGE_luci-app-passwall_INCLUDE_simple-obfs is not set
+EOF

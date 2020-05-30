@@ -20,32 +20,11 @@ on:
   #   types: [published]
   watch:
     types: [started]
-  #   paths:
-  #     - 'config/x86/32/.config'
-  #     - '.github/workflows/OpenWrt-x86_64-Generic.yml'
-  # push:
-  #   branches: 
-  #     - master
   schedule:
     - cron: 00 10 * * 6
-  # release:
-  #   types: [published]
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  # REPO_URL: https://github.com/u0225/lede
-  VPS_X86_SH: diy/vps_x86.sh
-  VPS_ARM_SH: diy/vps_arm.sh
-  VPS_PSW_SH: diy/vps_psw.sh
-  VPS_2SRPLUS_SH: diy/vps_2srplus.sh
-  # VPS_S: 2SRPlus
-  VPS_S: PSW
-  REPO_BRANCH: master
   TARGET: Openwrt_x86_32_Generic_minilite_drive
-  CONFIG_FILE: config/.config
-  FEEDS_FILE: diy/feeds.conf.default
-  VPS: diy/vps
-  DIY_SH: diy/diy.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -66,6 +45,19 @@ jobs:
         with:
           ref: master
 
+      - name: Load Settings.ini
+        run: |
+          source "${GITHUB_WORKSPACE}/setenv-x86.ini"
+          echo "::set-env name=REPO_URL_C::${REPO_URL_C}"
+          echo "::set-env name=REPO_URL_U::${REPO_URL_U}"
+          echo "::set-env name=REPO_BRANCH::${REPO_BRANCH}"
+          echo "::set-env name=CONFIG_FILE::${CONFIG_FILE}"
+          echo "::set-env name=VPS_S::${VPS_S}"
+          echo "::set-env name=FEEDS_FILE::${FEEDS_FILE}"
+          echo "::set-env name=VPS::${VPS}"
+          echo "::set-env name=SET_SH::${SET_SH}"
+          echo "::set-env name=DIY_SH::${DIY_SH}"
+
       - name: Space cleanup
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -84,11 +76,19 @@ jobs:
 
       - name: Clone openwrt
         run: |
-          git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
+          git clone --depth 1 $REPO_URL_C -b $REPO_BRANCH lede
           chmod -R 775 ./
-          cp ${{ env.FEEDS_FILE }} lede/feeds.conf.default
-          # 下面这项为r20.5.20或者是20200416之后源码使用，之前的源码就 注释掉 这项
-          sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
+          cd lede
+          cp ../${{ env.FEEDS_FILE }} feeds.conf.default
+          chmod -R 775 ../
+
+      - name: run sh
+        run: |
+          cd vps
+          vps.ok.sh
+          cd ..
+          cd diy
+          $DIY_SH
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -135,10 +135,6 @@ jobs:
         run: |
           rm -f lede/.config*
           touch lede/.config
-          $VPS_X86_SH
-          # $VPS_ARM_SH
-          $VPS_PSW_SH
-          # $VPS_2SRPLUS_SH
           cat diy/x32 >> lede/.config
           # cat diy/Setting >> lede/.config
           cat diy/drive >> lede/.config
@@ -149,7 +145,6 @@ jobs:
           # cat diy/mwan3 >> lede/.config
           cat ${{ env.VPS }} >> lede/.config
           cd lede
-          ../$DIY_SH
           ./scripts/feeds install -a
           make defconfig
 
@@ -176,16 +171,16 @@ jobs:
       - name: Get current date
         id: date
         run: |
-          echo "::set-output name=date::$(date +'%Y-%m-%d')"
-          echo "::set-output name=date1::$(date +'%y%m%d')"
-          echo "::set-output name=date2::$(date +'%Y-%m-%d_%H.%M')"
-          echo "::set-output name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
+          echo "::set-env name=date::$(date +'%Y-%m-%d')"
+          echo "::set-env name=date1::$(date +'%y%m%d')"
+          echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
+          echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
 
       # - name: Upload entire bin directory
       #   uses: actions/upload-artifact@master
       #   if: always()
       #   with:
-      #     name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_bin_all_${{steps.date.outputs.date1}}
+      #     name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_bin_all_${{ env.date1 }}
       #     path: lede/bin
 
       - name: Prepare ipk packages artifact
@@ -194,7 +189,7 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk_packages_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk_packages_${{ env.date }}
           path: ./ipk
 
       # - name: Prepare artifact
@@ -203,7 +198,7 @@ jobs:
       # - name: Upload artifact
       #   uses: actions/upload-artifact@master
       #   with:
-      #     name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_all_${{steps.date.outputs.date2}}
+      #     name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_all_${{ env.date1 }}
       #     path: lede/bin/targets/
 
       - name: Organize files
@@ -211,7 +206,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find lede/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp lede/.config ./firmware/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_${{steps.date.outputs.date1}}.config
+          cp lede/.config ./firmware/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_${{ env.date1 }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -220,5 +215,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_${{steps.date.outputs.date}}
+          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_${{ env.date }}
           path: ${{ env.FIRMWARE }}
