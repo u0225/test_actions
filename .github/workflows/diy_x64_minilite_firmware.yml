@@ -145,7 +145,7 @@ jobs:
           # cat diy/mwan3 >> lede/.config
           cat ${{ env.VPS }} >> lede/.config
           cd lede
-         ./scripts/feeds install -a
+          ./scripts/feeds install -a
           make defconfig
 
       - name: Make download
