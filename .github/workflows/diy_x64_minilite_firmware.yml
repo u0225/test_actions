@@ -47,7 +47,7 @@ jobs:
 
       - name: Load Settings.ini
         run: |
-          source "${GITHUB_WORKSPACE}/setenv-x86.ini"
+          source "${GITHUB_WORKSPACE}/setenv-arm.ini"
           echo "::set-env name=REPO_URL_C::${REPO_URL_C}"
           echo "::set-env name=REPO_URL_U::${REPO_URL_U}"
           echo "::set-env name=REPO_BRANCH::${REPO_BRANCH}"
@@ -55,8 +55,8 @@ jobs:
           echo "::set-env name=VPS_S::${VPS_S}"
           echo "::set-env name=FEEDS_FILE::${FEEDS_FILE}"
           echo "::set-env name=VPS::${VPS}"
-          echo "::set-env name=SET_SH::${SET_SH}"
-          echo "::set-env name=DIY_SH::${DIY_SH}"
+          echo "::set-env name=ARM_SET::${ARM_SET}"
+          echo "::set-env name=X86_DIY::${X86_DIY}"
 
       - name: Space cleanup
         env:
@@ -85,10 +85,13 @@ jobs:
       - name: run sh
         run: |
           cd vps
-          vps.ok.sh
+          x86-vps.sh
           cd ..
-          cd diy
-          $DIY_SH
+          cd armt
+          x86-branch.sh
+          cd ..
+          cd lede
+          ../armt/$X86_DIY
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
