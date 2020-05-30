@@ -25,6 +25,28 @@ on:
 
 env:
   TARGET: Openwrt_x86_32_Generic_full_drive
+  REPO_URL: https://github.com/coolsnowwolf/lede
+  # REPO_URL: https://github.com/u0225/lede
+  REPO_BRANCH: master
+  # REPO_BRANCH: r8.1.12
+  # REPO_BRANCH: r9.8.17
+  # REPO_BRANCH: r9.10.10
+  # REPO_BRANCH: 20200408
+  # REPO_BRANCH: 20200416
+  # REPO_BRANCH: r20.5.20
+  CONFIG_FILE: config/.config
+  FEEDS_FILE: feeds.default
+  VPS_S: 2SRPlus
+  # VPS_S: PSW
+  # VPS_ARM_M: vps/arm.ssr
+  # VPS_ARM_M: vps/arm.psw
+  VPS_X86_M: vps/x86.ssr
+  # VPS_X86_M: vps/x86.psw
+  # BRANCH_SET: armt/r89.sh
+  # BRANCH_SET: armt/r20.sh
+  BRANCH_SET: armt/master.sh
+  ARM_SET: armt/armt-set.sh
+  X86_DIY: diy/diy.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -45,19 +67,6 @@ jobs:
         with:
           ref: master
 
-      - name: Load Settings.ini
-        run: |
-          source "${GITHUB_WORKSPACE}/setenv-arm.ini"
-          echo "::set-env name=REPO_URL_C::${REPO_URL_C}"
-          echo "::set-env name=REPO_URL_U::${REPO_URL_U}"
-          echo "::set-env name=REPO_BRANCH::${REPO_BRANCH}"
-          echo "::set-env name=CONFIG_FILE::${CONFIG_FILE}"
-          echo "::set-env name=VPS_S::${VPS_S}"
-          echo "::set-env name=FEEDS_FILE::${FEEDS_FILE}"
-          echo "::set-env name=VPS::${VPS}"
-          echo "::set-env name=ARM_SET::${ARM_SET}"
-          echo "::set-env name=X86_DIY::${X86_DIY}"
-
       - name: Space cleanup
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -76,22 +85,12 @@ jobs:
 
       - name: Clone openwrt
         run: |
-          git clone --depth 1 $REPO_URL_C -b $REPO_BRANCH lede
+          git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
           cd lede
           cp ../${{ env.FEEDS_FILE }} feeds.conf.default
+          ../$BRANCH_SET
           chmod -R 775 ../
-
-      - name: run sh
-        run: |
-          cd vps
-          x86-vps.sh
-          cd ..
-          cd armt
-          x86-branch.sh
-          cd ..
-          cd lede
-          ../armt/$X86_DIY
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -141,13 +140,14 @@ jobs:
           cat diy/x32 >> lede/.config
           cat diy/Setting >> lede/.config
           cat diy/drive >> lede/.config
-          cat diy/luci_app >> lede/.config
+          cat diy/luci-app >> lede/.config
           # cat diy/lite >> lede/.config
           cat diy/samba4 >> lede/.config
           # cat diy/samba36 >> lede/.config
           # cat diy/mwan3 >> lede/.config
-          cat ${{ env.VPS }} >> lede/.config
+          cat ${{ env.VPS_X86_M }} >> lede/.config
           cd lede
+          ../$X86_DIY
           ./scripts/feeds install -a
           make defconfig
 
