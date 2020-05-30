@@ -43,6 +43,7 @@ env:
   SET_SH: armt/armt_set.sh
   R89_SH: armt/r89.sh
   R20_SH: armt/r20.sh
+  R20_ABOVE_SH: armt/r20_20200416_above.sh
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -84,10 +85,7 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
-          cd lede
-          # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
-          # sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          echo "src-git lienol https://github.com/u0225/psw_single" >> ./feeds.conf.default
+          cp ${{ env.FEEDS_FILE }} lede/feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -115,6 +113,8 @@ jobs:
           touch lede/.config
           $R89_SH
           # $R20_SH
+          # 下面这项为r20.5.20或者是20200416之后源码使用，之前的源码不要选
+          # $R20_ABOVE_SH
           # $VPS_X86_SH
           $VPS_ARM_SH
           $VPS_PSW_SH

@@ -86,10 +86,9 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
-          cd lede
-          cp ../${{ env.FEEDS_FILE }} feeds.conf.default
-          # sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
-          # echo "src-git lienol https://github.com/u0225/psw_single" >> ./feeds.conf.default
+          cp ${{ env.FEEDS_FILE }} lede/feeds.conf.default
+          # 下面这项为r20.5.20或者是20200416之后源码使用，之前的源码就 注释掉 这项
+          sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
