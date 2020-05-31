@@ -13,7 +13,7 @@
 #
 #==========================================================
 
-name: OpenWrt_wr8305rt-16m_firmware
+name: OpenWrt_zbt-wr8305rt-16m_firmware
 
 on:
   watch:
@@ -22,7 +22,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_wr8305rt-16m
+  TARGET: Openwrt_zbt-wr8305rt-16m
   # REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_URL: https://github.com/u0225/lede
   # REPO_BRANCH: master

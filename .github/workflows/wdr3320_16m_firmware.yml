@@ -13,7 +13,7 @@
 #
 #==========================================================
 
-name: OpenWrt_wdr3320-16m_firmware
+name: OpenWrt_tl-wdr3320-v2-16m_firmware
 
 on:
   watch:
@@ -22,7 +22,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_wdr3320-16m
+  TARGET: Openwrt_tl-wdr3320-v2-16m
   # REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_URL: https://github.com/u0225/lede
   # REPO_BRANCH: master

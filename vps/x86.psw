@@ -6,13 +6,13 @@
 #
 # ssr-plus
 #
-# CONFIG_PACKAGE_luci-app-ssr-plus=n
-# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin=n
-# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=n
-# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan=n
-# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2=n
-# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=n
-# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=n
+# CONFIG_PACKAGE_luci-app-ssr-plus is not set
+# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin is not set
+# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray is not set
+# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Trojan is not set
+# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2 is not set
+# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun is not set
+# CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server is not set
 
 #
 # passwall
