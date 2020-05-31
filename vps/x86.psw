@@ -1,7 +1,12 @@
 
 #
+# x86.vps.config
+#
+
+#
 # ssr-plus
 #
+
 # CONFIG_PACKAGE_luci-app-ssr-plus is not set
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin is not set
 # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray is not set
@@ -13,11 +18,13 @@
 #
 # passwall
 #
+
 CONFIG_PACKAGE_luci-app-passwall=y
 
 #
 # Configuration
 #
+
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ipt2socks=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_Shadowsocks=y
 CONFIG_PACKAGE_luci-app-passwall_INCLUDE_ShadowsocksR=y

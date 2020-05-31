@@ -37,9 +37,9 @@ env:
   # VPS_S: 2SRPlus
   VPS_S: PSW
   # VPS_ARM_M: vps/arm.ssr
-  # VPS_ARM_M: vps/arm.psw
-  # VPS_ARM_M: vps/arm.ssr.r8
-  VPS_ARM_M: vps/arm.psw.r8
+  VPS_ARM_M: vps/arm.psw
+  # VPS_ARM_M: vps/arm-full-32m.ssr
+  # VPS_ARM_M: vps/arm-full-32m.psw
   # VPS_X86_M: vps/x86.ssr
   # VPS_X86_M: vps/x86.psw
   BRANCH_SET: armt/r89.sh
