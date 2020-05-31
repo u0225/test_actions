@@ -1,7 +1,9 @@
 #!/bin/bash
+# ----------
 #
 # armt_set
 #
+
 sed -i 's/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/root:$1$0CVWiweD$4Xsq83ZIZtPJe8PVLfqJH0:16357:0:99999:7:::/g' package/lean/default-settings/files/zzz-default-settings
 sed -i "s/sed -i 's\/downloads.openwrt.org/# sed -i 's\/downloads.openwrt.org/g" package/lean/default-settings/files/zzz-default-settings
 sed -i "s/sed -i 's\/http\/https/# sed -i 's\/http\/https/g" package/lean/default-settings/files/zzz-default-settings

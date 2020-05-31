@@ -1,11 +1,8 @@
 #!/bin/bash
-# 本脚本工作目录必须是git clone的主目录
-# x86_64
-
-# Add some default settings
-#\cp -rf ../lede/zzz-default-settings package/lean/default-settings/files/zzz-default-settings
-
-# # curl -fsSL https://raw.githubusercontent.com/u0225/actions-openwrt-lede/master/zzz-default-settings > package/lean/default-settings/files/zzz-default-settings
+# ----------
+#
+# diy x86
+#
 
 sed -i 's/root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999:7:::/root:$1$0CVWiweD$4Xsq83ZIZtPJe8PVLfqJH0:16357:0:99999:7:::/g' package/lean/default-settings/files/zzz-default-settings
 sed -i "s/sed -i 's\/downloads.openwrt.org/# sed -i 's\/downloads.openwrt.org/g" package/lean/default-settings/files/zzz-default-settings
