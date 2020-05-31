@@ -6,6 +6,7 @@
 # =======================================================================
 # 下面这项是为r20.5.20或者是20200416(master)之后源码使用的，之前的不能用 #
 #                                                                        #
+cd ..
 sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
 
 cd armt
