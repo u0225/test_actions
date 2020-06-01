@@ -52,7 +52,7 @@ env:
   # VPS_M: vps/x86-opwrt-18.06.psw
   ### -+-+-
   CONFIG_FILE: config/openwrt-18.06-x86-64.config
-  FEEDS_FILE: feeds.default
+  # FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
   X86_DIY: diy/diy.sh
   FREE_UP_DISK: true
@@ -96,7 +96,7 @@ jobs:
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
           cd lede
-          echo "" feeds.conf.default
+          echo "" >> feeds.conf.default
           echo "src-git openwrt-others https://github.com/u0225/openwrt-others" >> feeds.conf.default
           echo "src-git psw_single https://github.com/u0225/psw_single" >> feeds.conf.default
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
