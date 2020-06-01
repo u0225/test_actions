@@ -25,6 +25,7 @@ env:
   TARGET: Openwrt_youku-yk1-32m
   # REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_URL: https://github.com/u0225/lede
+  ### -+-+-
   # REPO_BRANCH: master
   REPO_BRANCH: r8.1.12
   # REPO_BRANCH: r9.8.17
@@ -32,19 +33,21 @@ env:
   # REPO_BRANCH: 20200408
   # REPO_BRANCH: 20200416
   # REPO_BRANCH: r20.5.20
-  CONFIG_FILE: config/.config
-  FEEDS_FILE: feeds.default
-  # VPS_S: 2SRPlus
-  VPS_S: PSW
-  # VPS_ARM_M: vps/arm.ssr
-  # VPS_ARM_M: vps/arm.psw
-  # VPS_ARM_M: vps/arm-full-32m.ssr
-  VPS_ARM_M: vps/arm-full-32m.psw
-  # VPS_X86_M: vps/x86.ssr
-  # VPS_X86_M: vps/x86.psw
+  ### -+-+-
+  # BRANCH_SET: armt/master.sh
   BRANCH_SET: armt/r89.sh
   # BRANCH_SET: armt/r20.sh
-  # BRANCH_SET: armt/master.sh
+  ### -+-+-
+  # VPS_S: 2SRPlus
+  VPS_S: PSW
+  ### -+-+-
+  # VPS_M: vps/arm.ssr
+  VPS_M: vps/arm.psw
+  # VPS_M: vps/x86.ssr
+  # VPS_M: vps/x86.psw
+  ### -+-+-
+  CONFIG_FILE: config/.config
+  FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
   X86_DIY: diy/diy.sh
   FREE_UP_DISK: true
@@ -119,7 +122,7 @@ jobs:
           touch lede/.config
           cat armt/youku-yk1-32m >> lede/.config
           cat armt/armt-luci-app-16m >> lede/.config
-          cat ${{ env.VPS_ARM_M }} >> lede/.config
+          cat ${{ env.VPS_M }} >> lede/.config
           cd lede
           ../$ARM_SET
           ./scripts/feeds install -a
