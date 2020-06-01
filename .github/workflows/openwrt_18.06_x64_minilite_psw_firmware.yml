@@ -13,22 +13,24 @@
 #
 #==========================================================
 
-name: OpenWrt_x86_64_Generic_minilite_drive
+name: OpenWrt_18.06_x86_64_Generic_minilite_drive
 
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_x86_64_Generic_minilite_drive
-  REPO_URL: https://github.com/coolsnowwolf/lede
+  TARGET: Openwrt_18.06_x86_64_Generic_minilite_drive
+  REPO_URL: https://github.com/openwrt/openwrt
+  # REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
-  REPO_BRANCH: master
+  # REPO_BRANCH: master
+  REPO_BRANCH: openwrt-18.06
   # REPO_BRANCH: r8.1.12
   # REPO_BRANCH: r9.8.17
   # REPO_BRANCH: r9.10.10
@@ -36,7 +38,7 @@ env:
   # REPO_BRANCH: 20200416
   # REPO_BRANCH: r20.5.20
   ### -+-+-
-  BRANCH_SET: armt/master.sh
+  # BRANCH_SET: armt/master.sh
   # BRANCH_SET: armt/r89.sh
   # BRANCH_SET: armt/r20.sh
   ### -+-+-
@@ -46,9 +48,10 @@ env:
   # VPS_M: vps/arm.ssr
   # VPS_M: vps/arm.psw
   # VPS_M: vps/x86.ssr
-  VPS_M: vps/x86.psw
+  # VPS_M: vps/x86.psw
+  # VPS_M: vps/x86-opwrt-18.06.psw
   ### -+-+-
-  CONFIG_FILE: config/.config
+  CONFIG_FILE: config/openwrt-18.06-x86-64.config
   FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
   X86_DIY: diy/diy.sh
@@ -93,8 +96,10 @@ jobs:
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
           cd lede
-          cp ../${{ env.FEEDS_FILE }} feeds.conf.default
-          ../$BRANCH_SET
+          echo "src-git openwrt-others https://github.com/u0225/openwrt-others" >> feeds.conf.default
+          echo "src-git psw_single https://github.com/u0225/psw_single" >> feeds.conf.default
+          # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
+          # ../$BRANCH_SET
           chmod -R 775 ../
 
       - name: Free up disk space
@@ -109,27 +114,6 @@ jobs:
           ln -s /mnt/lede/staging_dir lede/staging_dir
           df -h
 
-      - name: Git clone themes and luci-app
-        run: |
-          cd lede/package
-          mkdir openwrt-packages
-          cd openwrt-packages
-          # git clone https://github.com/fw876/helloworld.git
-          # git clone https://github.com/Lienol/openwrt-package.git
-          # git clone https://github.com/u0225/Lienol-openwrt-package.git
-          git clone https://github.com/openwrt-develop/luci-theme-atmaterial.git
-          git clone https://github.com/Aslin-Ameng/luci-theme-Night.git
-          git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
-          git clone https://github.com/rufengsuixing/luci-app-autoipsetadder.git
-          git clone https://github.com/destan19/OpenAppFilter.git
-          git clone https://github.com/tty228/luci-app-serverchan.git
-          git clone https://github.com/vernesong/OpenClash.git
-          git clone https://github.com/u0225/luci-app-aliddns.git
-          git clone https://github.com/garypang13/luci-app-eqos.git
-          git clone https://github.com/u0225/luci-app-dnspod.git
-          git clone https://github.com/u0225/luci-app-smartdns.git
-          git clone https://github.com/u0225/smartdns.git
-
       - name: Git pull Update feeds and install
         run: |
           cd lede
@@ -142,17 +126,18 @@ jobs:
         run: |
           rm -f lede/.config*
           touch lede/.config
-          cat diy/x64 >> lede/.config
+          # cat diy/x64 >> lede/.config
           # cat diy/Setting >> lede/.config
-          cat diy/drive >> lede/.config
+          # cat diy/drive >> lede/.config
           # cat diy/luci-app >> lede/.config
-          cat diy/mini-lite >> lede/.config
-          cat diy/samba4 >> lede/.config
+          # cat diy/mini-lite >> lede/.config
+          # cat diy/samba4 >> lede/.config
           # cat diy/samba36 >> lede/.config
           # cat diy/mwan3 >> lede/.config
-          cat ${{ env.VPS_M }} >> lede/.config
+          # cat ${{ env.VPS_M }} >> lede/.config
+          cp ${{ env.CONFIG_FILE }} lede/.config
           cd lede
-          ../$X86_DIY
+          # ../$X86_DIY
           ./scripts/feeds install -a
           make defconfig
 
