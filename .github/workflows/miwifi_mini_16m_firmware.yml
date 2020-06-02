@@ -16,8 +16,8 @@
 name: OpenWrt_miwifi-mini-16m_firmware
 
 on:
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -162,16 +162,16 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk_packages_${{ env.date }}
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk
           path: ./ipk
 
       - name: Prepare artifact
         run: |
-          cp lede/.config ./lede/bin/targets/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_${{ env.date1 }}.config
+          cp lede/.config ./lede/bin/targets/${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}.config
           find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_${{ env.date }}
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware
           path: lede/bin/targets/

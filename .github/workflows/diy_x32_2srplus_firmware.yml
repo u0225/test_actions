@@ -18,13 +18,13 @@ name: OpenWrt_x86_32_Generic_full_drive
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_x86_32_Generic_full_drive
+  TARGET: Openwrt_x86_32_full_drive
   REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
@@ -95,6 +95,7 @@ jobs:
           cd lede
           cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           ../$BRANCH_SET
+          ../others.sh
           chmod -R 775 ../
 
       - name: Free up disk space
@@ -108,27 +109,6 @@ jobs:
           ln -s /mnt/lede/dl lede/dl
           ln -s /mnt/lede/staging_dir lede/staging_dir
           df -h
-
-      - name: Git clone themes and luci-app
-        run: |
-          cd lede/package
-          mkdir openwrt-packages
-          cd openwrt-packages
-          # git clone https://github.com/fw876/helloworld.git
-          # git clone https://github.com/Lienol/openwrt-package.git
-          # git clone https://github.com/u0225/Lienol-openwrt-package.git
-          git clone https://github.com/openwrt-develop/luci-theme-atmaterial.git
-          git clone https://github.com/Aslin-Ameng/luci-theme-Night.git
-          git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
-          git clone https://github.com/rufengsuixing/luci-app-autoipsetadder.git
-          git clone https://github.com/destan19/OpenAppFilter.git
-          git clone https://github.com/tty228/luci-app-serverchan.git
-          git clone https://github.com/vernesong/OpenClash.git
-          git clone https://github.com/u0225/luci-app-aliddns.git
-          git clone https://github.com/garypang13/luci-app-eqos.git
-          git clone https://github.com/u0225/luci-app-dnspod.git
-          git clone https://github.com/u0225/luci-app-smartdns.git
-          git clone https://github.com/u0225/smartdns.git
 
       - name: Git pull Update feeds and install
         run: |
@@ -188,7 +168,7 @@ jobs:
       #   uses: actions/upload-artifact@master
       #   if: always()
       #   with:
-      #     name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_bin_all_${{ env.date1 }}
+      #     name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_bin_all
       #     path: lede/bin
 
       - name: Prepare ipk packages artifact
@@ -197,7 +177,7 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk_packages_${{ env.date }}
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
@@ -206,7 +186,7 @@ jobs:
       # - name: Upload artifact
       #   uses: actions/upload-artifact@master
       #   with:
-      #     name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_all_${{ env.date1 }}
+      #     name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_all
       #     path: lede/bin/targets/
 
       - name: Organize files
@@ -214,7 +194,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find lede/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp lede/.config ./firmware/${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_${{ env.date1 }}.config
+          cp lede/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -223,5 +203,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_${{ env.date }}
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware
           path: ${{ env.FIRMWARE }}
