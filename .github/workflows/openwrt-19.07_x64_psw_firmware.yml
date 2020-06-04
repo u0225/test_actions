@@ -13,19 +13,20 @@
 #
 #==========================================================
 
-name: OpenWrt_x86_32_Generic_minilite_drive
+name: OpenWrt_x86_64_Generic_minilite_drive
 
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_x86_32_minilite_drive
-  REPO_URL: https://github.com/coolsnowwolf/lede
+  TARGET: Openwrt_x86_64_minilite_drive
+  # REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_URL: https://github.com/u0225/openwrt-19.07
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
   REPO_BRANCH: master
@@ -36,7 +37,7 @@ env:
   # REPO_BRANCH: 20200416
   # REPO_BRANCH: r20.5.20
   ### -+-+-
-  BRANCH_SET: armt/master.sh
+  # BRANCH_SET: armt/master.sh
   # BRANCH_SET: armt/r89.sh
   # BRANCH_SET: armt/r20.sh
   ### -+-+-
@@ -93,9 +94,9 @@ jobs:
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
           cd lede
-          cp ../${{ env.FEEDS_FILE }} feeds.conf.default
-          ../$BRANCH_SET
-          ../others.sh
+          # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
+          # ../$BRANCH_SET
+          ../others-19.07.sh
           chmod -R 775 ../
 
       - name: Free up disk space
@@ -122,7 +123,7 @@ jobs:
         run: |
           rm -f lede/.config*
           touch lede/.config
-          cat diy/x32 >> lede/.config
+          cat diy/x64 >> lede/.config
           # cat diy/Setting >> lede/.config
           cat diy/drive >> lede/.config
           # cat diy/luci-app >> lede/.config
@@ -132,7 +133,7 @@ jobs:
           # cat diy/mwan3 >> lede/.config
           cat ${{ env.VPS_M }} >> lede/.config
           cd lede
-          ../$X86_DIY
+          # ../$X86_DIY
           ./scripts/feeds install -a
           make defconfig
 

@@ -18,8 +18,8 @@ name: OpenWrt_x86_64_Generic_minilite_drive
 on:
   # release:
   #   types: [published]
-  watch:
-    types: [started]
+  # watch:
+  #   types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -96,7 +96,7 @@ jobs:
           cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           ../$BRANCH_SET
           ../others.sh
-          chmod -R 775 ./
+          chmod -R 775 ../
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
