@@ -95,6 +95,14 @@ jobs:
           sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
           df -h
 
+      - name: Get current date
+        id: date
+        run: |
+          echo "::set-env name=date::$(date +'%Y-%m-%d')"
+          echo "::set-env name=date1::$(date +'%y%m%d')"
+          echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
+          echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
+
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
@@ -170,14 +178,6 @@ jobs:
           du -h --max-depth=1 ./build_dir
           du -h --max-depth=1 ./bin
           echo "::set-env name=status::success"
-
-      - name: Get current date
-        id: date
-        run: |
-          echo "::set-env name=date::$(date +'%Y-%m-%d')"
-          echo "::set-env name=date1::$(date +'%y%m%d')"
-          echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
-          echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
 
       # - name: Upload entire bin directory
       #   uses: actions/upload-artifact@master
