@@ -24,7 +24,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt-19.07_x86_64_minilite_drive
+  TARGET: Openwrt-19.07_x86_64_minilite_vps_drive
   # REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_URL: https://github.com/u0225/openwrt-19.07
   # REPO_URL: https://github.com/u0225/lede
@@ -42,12 +42,13 @@ env:
   # BRANCH_SET: armt/r20.sh
   ### -+-+-
   # VPS_S: 2SRPlus
-  VPS_S: PSW
+  # VPS_S: PSW
   ### -+-+-
   # VPS_M: vps/arm.ssr
   # VPS_M: vps/arm.psw
   # VPS_M: vps/x86.ssr
-  VPS_M: vps/x86.psw
+  # VPS_M: vps/x86.psw
+  VPS_M: vps/x86.vps
   ### -+-+-
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
@@ -193,7 +194,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_ipk
+          name: ${{ env.date }}_${{ env.TARGET }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
@@ -210,7 +211,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find openwrt/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}.config
+          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -243,8 +244,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         with:
-          tag_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}
-          release_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}
+          tag_name: ${{ env.date }}_${{ env.TARGET }}
+          release_name: ${{ env.date }}_${{ env.TARGET }}
           body: |
               澧欏唴鍔犻€熶笅杞?
               
@@ -270,5 +271,5 @@ jobs:
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
           # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_firmware
+          name: ${{ env.date }}_${{ env.TARGET }}_firmware
           path: ${{ env.FIRMWARE }}
