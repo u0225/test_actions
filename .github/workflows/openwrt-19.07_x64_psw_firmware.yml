@@ -13,7 +13,7 @@
 #
 #==========================================================
 
-name: OpenWrt_x86_64_Generic_minilite_drive
+name: OpenWrt-19.07_x86_64_minilite_drive
 
 on:
   # release:
@@ -24,7 +24,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_x86_64_minilite_drive
+  TARGET: Openwrt-19.07_x86_64_minilite_drive
   # REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_URL: https://github.com/u0225/openwrt-19.07
   # REPO_URL: https://github.com/u0225/lede
@@ -58,6 +58,12 @@ env:
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false
+  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+  UPLOAD_BIN_DIR_FOR_ARTIFACT: false"
+  UPLOAD_FIRMWARE_FOR_ARTIFACT: true"
+  UPLOAD_FIRMWARE_FOR_RELEASE: true"
+  UPLOAD_FIRMWARE_TO_COWTRANSFER: true"
+  UPLOAD_FIRMWARE_TO_WETRANSFER: true"
   TZ: Asia/Shanghai
 
 jobs:
@@ -91,9 +97,9 @@ jobs:
 
       - name: Clone openwrt
         run: |
-          git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
+          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
-          cd lede
+          cd openwrt
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # ../$BRANCH_SET
           ../others-19.07.sh
@@ -104,16 +110,16 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo mkdir -p -m 777 lede/build_dir /mnt/lede/dl /mnt/lede/staging_dir /mnt/lede/build_dir/hostpkg /mnt/lede/build_dir/host
-          ln -s /mnt/lede/build_dir/hostpkg lede/build_dir/hostpkg
-          ln -s /mnt/lede/build_dir/host lede/build_dir/host
-          ln -s /mnt/lede/dl lede/dl
-          ln -s /mnt/lede/staging_dir lede/staging_dir
+          sudo mkdir -p -m 777 openwrt/build_dir /mnt/openwrt/dl /mnt/openwrt/staging_dir /mnt/openwrt/build_dir/hostpkg /mnt/openwrt/build_dir/host
+          ln -s /mnt/openwrt/build_dir/hostpkg openwrt/build_dir/hostpkg
+          ln -s /mnt/openwrt/build_dir/host openwrt/build_dir/host
+          ln -s /mnt/openwrt/dl openwrt/dl
+          ln -s /mnt/openwrt/staging_dir openwrt/staging_dir
           df -h
 
       - name: Git pull Update feeds and install
         run: |
-          cd lede
+          cd openwrt
           git pull
           ./scripts/feeds update -a
           ./scripts/feeds install -a
@@ -121,33 +127,40 @@ jobs:
 
       - name: Load custom configuration
         run: |
-          rm -f lede/.config*
-          touch lede/.config
-          cat diy/x64 >> lede/.config
-          # cat diy/Setting >> lede/.config
-          cat diy/drive >> lede/.config
-          # cat diy/luci-app >> lede/.config
-          cat diy/mini-lite >> lede/.config
-          cat diy/samba4 >> lede/.config
-          # cat diy/samba36 >> lede/.config
-          # cat diy/mwan3 >> lede/.config
-          cat ${{ env.VPS_M }} >> lede/.config
-          cd lede
+          rm -f openwrt/.config*
+          touch openwrt/.config
+          cat diy/x64 >> openwrt/.config
+          # cat diy/Setting >> openwrt/.config
+          cat diy/drive >> openwrt/.config
+          # cat diy/luci-app >> openwrt/.config
+          cat diy/mini-lite >> openwrt/.config
+          cat diy/samba4 >> openwrt/.config
+          # cat diy/samba36 >> openwrt/.config
+          # cat diy/mwan3 >> openwrt/.config
+          cat ${{ env.VPS_M }} >> openwrt/.config
+          cd openwrt
           # ../$X86_DIY
           ./scripts/feeds install -a
           make defconfig
 
+      - name: SSH connection to Actions
+        uses: garypang13/debugger-action@master
+        if: env.SSH_ACTIONS == 'true'
+
       - name: Make download
         run: |
-          cd lede
+          cd openwrt
           make download -j8
-          find ./dl/ -size -1024c -exec rm -f {} \;
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
           df -h
 
       - name: Compile firmware
         run: |
-          cd lede
-          make -j$(nproc) || make -j1 V=s
+          cd openwrt
+          echo -e "$(($(nproc)+1)) thread compile"
+          make -j$(($(nproc)+1)) || make -j1 V=s
+          # make -j$(nproc) || make -j1 V=s
           echo "======================="
           echo "Space usage:"
           echo "======================="
@@ -156,6 +169,7 @@ jobs:
           du -h --max-depth=1 ./ --exclude=build_dir --exclude=bin
           du -h --max-depth=1 ./build_dir
           du -h --max-depth=1 ./bin
+          echo "::set-env name=status::success"
 
       - name: Get current date
         id: date
@@ -170,39 +184,91 @@ jobs:
       #   if: always()
       #   with:
       #     name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_bin_all
-      #     path: lede/bin
+      #     path: openwrt/bin
 
       - name: Prepare ipk packages artifact
-        run: mkdir ./ipk && mkdir ./ipk/targets && cp -r ./lede/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./lede/bin/packages ./ipk
+        run: mkdir ./ipk && mkdir ./ipk/targets && cp -r ./openwrt/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./openwrt/bin/packages ./ipk
 
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk
+          # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
-      #   run: find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+      #   run: find openwrt/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       # - name: Upload artifact
       #   uses: actions/upload-artifact@master
       #   with:
       #     name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_all
-      #     path: lede/bin/targets/
+      #     path: openwrt/bin/targets/
 
       - name: Organize files
         id: organize
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
-          mkdir firmware && find lede/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp lede/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}.config
+          mkdir firmware && find openwrt/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
+          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
+
+      - name: Upload firmware to cowtransfer
+        if: env.UPLOAD_FIRMWARE_TO_COWTRANSFER == 'true'
+        continue-on-error: true
+        run: |
+          curl -fsSL git.io/file-transfer | sh
+          cowurl=$(./transfer cow --block 2621440 -s --no-progress ${FIRMWARE})
+          cowurl=$(echo $cowurl | grep -o -E "https[^ ]*")
+          echo "::set-env name=COWURL::$cowurl"
+          echo "Download Link: $cowurl"
+
+      - name: Upload firmware to WeTransfer
+        if: env.UPLOAD_FIRMWARE_TO_WETRANSFER == 'true'
+        continue-on-error: true
+        run: |
+          curl -fsSL git.io/file-transfer | sh
+          wetrans=$(./transfer wet -s -p 16 --no-progress ${FIRMWARE})
+          wetrans=$(echo $wetrans | grep -o -E "https[^ ]*")
+          echo "::set-env name=WETRANS::$wetrans"
+          echo "Download Link: $wetrans"
+
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@master
+        continue-on-error: true
+        if: env.REPO_TOKEN && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+        with:
+          tag_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}
+          release_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}
+          body: |
+              澧欏唴鍔犻€熶笅杞?
+              
+              濂剁墰蹇紶: ${{ env.COWURL }}
+              
+              WeTransfer: ${{ env.WETRANS }}
+              
+              璇峰垎閰嶄笉浣庝簬1G 鐨勫唴瀛樺拰瀛樺偍绌洪棿
+          draft: false
+          prerelease: false     
+
+      - name: Upload firmware for release
+        uses: csexton/release-asset-action@master
+        continue-on-error: true
+        if: env.REPO_TOKEN && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
+        with:
+          pattern: "${{ env.FIRMWARE }}/*"
+          github-token: ${{ secrets.REPO_TOKEN }}
+          release-url: ${{ steps.create_release.outputs.upload_url }}
 
       - name: Prepare Upload firmware artifact
         uses: actions/upload-artifact@master
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware
+          # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_firmware
           path: ${{ env.FIRMWARE }}
