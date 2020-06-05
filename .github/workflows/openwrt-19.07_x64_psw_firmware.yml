@@ -143,7 +143,7 @@ jobs:
           # cat diy/Setting >> openwrt/.config
           cat diy/drive >> openwrt/.config
           # cat diy/luci-app >> openwrt/.config
-          cat diy/mini-lite >> openwrt/.config
+          # cat diy/mini-lite >> openwrt/.config
           cat diy/samba4 >> openwrt/.config
           # cat diy/samba36 >> openwrt/.config
           # cat diy/mwan3 >> openwrt/.config
