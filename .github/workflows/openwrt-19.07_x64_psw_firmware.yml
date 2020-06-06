@@ -135,18 +135,25 @@ jobs:
           ./scripts/feeds install -a
           df -h
 
+      - name: remove luci-app
+        run: |
+          cd diy
+          sed -i s"/CONFIG_PACKAGE_luci-app-dockerman=y/# CONFIG_PACKAGE_luci-app-dockerman is not set/g" x64
+          sed -i s"/CONFIG_PACKAGE_luci-app-kodexplorer=y/# CONFIG_PACKAGE_luci-app-kodexplorer is not set/g" x64
+          sed -i s"/CONFIG_PACKAGE_luci-app-adguardhome=y/# CONFIG_PACKAGE_luci-app-adguardhome is not set/g" x64
+          sed -i s"/CONFIG_PACKAGE_luci-app-autoipsetadder=y/# CONFIG_PACKAGE_luci-app-autoipsetadder is not set/g" x64
+          sed -i s"/CONFIG_PACKAGE_luci-app-oaf=y/# CONFIG_PACKAGE_luci-app-oaf is not set/g" x64
+          sed -i s"/CONFIG_PACKAGE_luci-app-serverchan=y/# CONFIG_PACKAGE_luci-app-serverchan is not set/g" x64
+          sed -i s"/CONFIG_PACKAGE_luci-app-openclash=y/# CONFIG_PACKAGE_luci-app-openclash is not set/g" x64
+
       - name: Load custom configuration
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
           cat diy/x64 >> openwrt/.config
-          # cat diy/Setting >> openwrt/.config
-          cat diy/drive >> openwrt/.config
-          # cat diy/luci-app >> openwrt/.config
-          cat diy/mini-lite >> openwrt/.config
+          # cat diy/drive >> openwrt/.config
+          # cat diy/mini-lite >> openwrt/.config
           cat diy/samba4 >> openwrt/.config
-          # cat diy/samba36 >> openwrt/.config
-          # cat diy/mwan3 >> openwrt/.config
           cat ${{ env.VPS_M }} >> openwrt/.config
           cd openwrt
           # ../$X86_DIY
