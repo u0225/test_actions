@@ -138,6 +138,7 @@ jobs:
       - name: remove luci-app
         run: |
           cd diy
+          sed -i s"/CONFIG_EFI_IMAGES=y/# CONFIG_EFI_IMAGES is not set/g" x64
           sed -i s"/CONFIG_PACKAGE_luci-app-dockerman=y/# CONFIG_PACKAGE_luci-app-dockerman is not set/g" x64
           sed -i s"/CONFIG_PACKAGE_luci-app-kodexplorer=y/# CONFIG_PACKAGE_luci-app-kodexplorer is not set/g" x64
           sed -i s"/CONFIG_PACKAGE_luci-app-adguardhome=y/# CONFIG_PACKAGE_luci-app-adguardhome is not set/g" x64
