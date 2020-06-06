@@ -153,8 +153,8 @@ jobs:
           cat diy/x64 >> openwrt/.config
           # cat diy/drive >> openwrt/.config
           # cat diy/mini-lite >> openwrt/.config
-          cat diy/samba4 >> openwrt/.config
-          cat ${{ env.VPS_M }} >> openwrt/.config
+          # cat diy/samba4 >> openwrt/.config
+          # cat ${{ env.VPS_M }} >> openwrt/.config
           cd openwrt
           # ../$X86_DIY
           ./scripts/feeds install -a
