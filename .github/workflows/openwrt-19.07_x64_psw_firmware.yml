@@ -197,7 +197,7 @@ jobs:
       #     path: openwrt/bin
 
       - name: Prepare ipk packages artifact
-        run: mkdir ./ipk && mkdir ./ipk/targets && cp -r ./openwrt/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./openwrt/bin/packages ./ipk
+        run: mkdir -p ./ipk/targets && cp -r ./openwrt/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./openwrt/bin/packages ./ipk
 
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
@@ -219,7 +219,7 @@ jobs:
         id: organize
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
-          mkdir firmware && find openwrt/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
+          mkdir firmware && find openwrt/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined-squashfs*.*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "config.*" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
           cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
