@@ -24,7 +24,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Lienol-Openwrt-19.07_x86_64_minilite_vps_drive
+  TARGET: Lienol-Openwrt-19.07_x86_64_minilite_psw_drive
   # REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/openwrt-19.07
   REPO_URL: https://github.com/Lienol/openwrt
@@ -49,8 +49,8 @@ env:
   # VPS_M: vps/arm.ssr
   # VPS_M: vps/arm.psw
   # VPS_M: vps/x86.ssr
-  # VPS_M: vps/x86.psw
-  VPS_M: vps/x86.vps
+  VPS_M: vps/x86.psw
+  # VPS_M: vps/x86.vps
   ### -+-+-
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
@@ -109,10 +109,7 @@ jobs:
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-          git clone https://github.com/coolsnowwolf/lede lede
           chmod -R 775 ./
-          rm -rf openwrt/package/lean
-          cp -rf lede/package/lean openwrt/package
           cd openwrt
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # ../$BRANCH_SET
