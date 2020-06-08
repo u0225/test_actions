@@ -26,10 +26,12 @@ on:
 env:
   TARGET: Openwrt-19.07_x86_64_minilite_vps_drive
   # REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_URL: https://github.com/u0225/openwrt-19.07
+  # REPO_URL: https://github.com/u0225/openwrt-19.07
+  REPO_URL: https://github.com/Lienol/openwrt
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
-  REPO_BRANCH: master
+  REPO_BRANCH: dev-19.07
+  # REPO_BRANCH: master
   # REPO_BRANCH: r8.1.12
   # REPO_BRANCH: r9.8.17
   # REPO_BRANCH: r9.10.10
@@ -111,6 +113,7 @@ jobs:
           cd openwrt
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # ../$BRANCH_SET
+          sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
           # sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
           ../others-19.07.sh
           chmod -R 775 ../
