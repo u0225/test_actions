@@ -3,14 +3,12 @@
 #
 
 cd package
-rm -rf OpenAppFilter
-rm -rf diy
 rm -rf lean
 rm -rf default-settings
 git clone https://github.com/fw876/helloworld.git
-git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
+# git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
 git clone https://github.com/rufengsuixing/luci-app-autoipsetadder.git
-git clone https://github.com/destan19/OpenAppFilter.git
+# git clone https://github.com/destan19/OpenAppFilter.git
 git clone https://github.com/tty228/luci-app-serverchan.git
 git clone https://github.com/lisaac/luci-app-dockerman
 cd .. && cd ..
