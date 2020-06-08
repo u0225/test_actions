@@ -111,10 +111,16 @@ jobs:
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
           cd openwrt
+          # sed -i s"$#src-git packages https://github.com/coolsnowwolf/packages$src-git packages https://github.com/coolsnowwolf/packages$g" feeds.conf.default
+          # sed -i s"$#src-git luci https://github.com/coolsnowwolf/luci$src-git luci https://github.com/coolsnowwolf/luci$g" feeds.conf.default
+          sed -i s"$#src-git packages https://github.com/Lienol/openwrt-packages.git$src-git packages https://github.com/Lienol/openwrt-packages.git$g" feeds.conf.default
+          sed -i s"$#src-git luci https://github.com/Lienol/openwrt-luci.git$src-git luci https://github.com/Lienol/openwrt-luci.git$g" feeds.conf.default
+          #
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # ../$BRANCH_SET
           # sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
           # sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
+          #
           ../others-19.07.sh
           chmod -R 775 ../
 
