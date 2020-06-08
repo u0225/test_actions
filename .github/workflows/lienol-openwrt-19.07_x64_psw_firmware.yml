@@ -115,7 +115,7 @@ jobs:
           # ../$BRANCH_SET
           sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
           # sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
-          ../lienol-others-19.07.sh
+          ../lienol-others-1907.sh
           chmod -R 775 ../
 
       - name: Free up disk space
