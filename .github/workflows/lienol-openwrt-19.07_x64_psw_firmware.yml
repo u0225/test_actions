@@ -23,8 +23,12 @@ on:
   schedule:
     - cron: 00 10 * * 6
 
+# VPSS=$(echo 2SRPlus)
+# VPSS=$(echo PSW)
+VPSS=$(echo VPS)
+
 env:
-  TARGET: Lienol-Openwrt-19.07_x86_64_minilite_${{ env.VPS_S }}_drive
+  TARGET: Lienol-Openwrt-19.07_x86_64_minilite_$VPSS_drive
   # REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/openwrt-19.07
   REPO_URL: https://github.com/Lienol/openwrt
@@ -45,7 +49,7 @@ env:
   ### -+-+-
   # VPS_S: 2SRPlus
   # VPS_S: PSW
-  VPS_S: VPS
+  # VPS_S: VPS
   ### -+-+-
   # VPS_M: vps/arm.ssr
   # VPS_M: vps/arm.psw
