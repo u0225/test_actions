@@ -13,7 +13,7 @@
 #
 #==========================================================
 
-name: OpenWrt-19.07_x86_64_minilite_drive
+name: Lienol-OpenWrt-19.07_x86_64_minilite_drive
 
 on:
   # release:
@@ -24,7 +24,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt-19.07_x86_64_minilite_vps_drive
+  TARGET: Lienol-Openwrt-19.07_x86_64_minilite_vps_drive
   # REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/openwrt-19.07
   REPO_URL: https://github.com/Lienol/openwrt
