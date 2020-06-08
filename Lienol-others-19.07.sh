@@ -21,3 +21,6 @@ git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
 git clone https://github.com/rufengsuixing/luci-app-autoipsetadder.git
 git clone https://github.com/destan19/OpenAppFilter.git
 git clone https://github.com/tty228/luci-app-serverchan.git
+
+cd ..
+cd ..

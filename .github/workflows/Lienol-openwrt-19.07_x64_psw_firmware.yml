@@ -18,8 +18,8 @@ name: Lienol-OpenWrt-19.07_x86_64_minilite_drive
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -109,13 +109,16 @@ jobs:
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+          git clone https://github.com/coolsnowwolf/lede lede
           chmod -R 775 ./
+          rm -f openwrt/package/lean
+          cp -rf lede/package/lean openwrt/package
           cd openwrt
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # ../$BRANCH_SET
           sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
           # sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
-          ../Lienol-others-19.07.sh
+          ../lienol-others-19.07.sh
           chmod -R 775 ../
 
       - name: Free up disk space
