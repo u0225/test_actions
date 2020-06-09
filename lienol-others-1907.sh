@@ -10,7 +10,7 @@ rm -rf default-settings/files/zzz-default-settings
 
 cd .. && cd ..
 mv -f package-others/zzz-default-settings openwrt/package/default-settings/files
-mv -f package-others/* openwrt/package
+cp -rf package-others/* openwrt/package
 
 cd openwrt/package/lean/ssrplus
 git clone https://github.com/fw876/helloworld.git
