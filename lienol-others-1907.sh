@@ -9,6 +9,8 @@ rm -rf OpenAppFilter
 rm -rf default-settings/files/zzz-default-settings
 
 cd .. && cd ..
+mv -f package-others/Makefile openwrt/target/linux/x86
+mv -f package-others/target.mk openwrt/include
 mv -f package-others/zzz-default-settings openwrt/package/default-settings/files
 cp -rf package-others/* openwrt/package
 
