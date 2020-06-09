@@ -156,7 +156,7 @@ jobs:
           rm -f openwrt/.config*
           touch openwrt/.config
           cat opwrt-1907/x64 >> openwrt/.config
-          cat opwrt-1907/drive >> openwrt/.config
+          # cat opwrt-1907/drive >> openwrt/.config
           cat opwrt-1907/mini-lite >> openwrt/.config
           cat opwrt-1907/samba4 >> openwrt/.config
           cat ${{ env.VPS_M }} >> openwrt/.config
