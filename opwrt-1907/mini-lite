@@ -97,11 +97,14 @@ CONFIG_PACKAGE_tree=y
 CONFIG_PACKAGE_vim-fuller=y
 CONFIG_PACKAGE_wget=y
 
+# 无线WIFI WPA-PSK加密必须用的包
+CONFIG_PACKAGE_wpad=y
+
 CONFIG_PACKAGE_luci-theme-argon-dark-mod=y
 CONFIG_PACKAGE_luci-theme-argon-light-mod=y
 CONFIG_PACKAGE_luci-theme-freifunk-generic=y
-CONFIG_PACKAGE_luci-theme-openwrt=y
 CONFIG_PACKAGE_luci-theme-material=y
-CONFIG_PACKAGE_luci-theme-atmaterial=y
-CONFIG_PACKAGE_luci-theme-Night=y
-CONFIG_PACKAGE_luci-theme-argon=y
+# CONFIG_PACKAGE_luci-theme-openwrt is not set
+# CONFIG_PACKAGE_luci-theme-atmaterial is not set
+# CONFIG_PACKAGE_luci-theme-Night is not set
+# CONFIG_PACKAGE_luci-theme-argon is not set
