@@ -2,7 +2,7 @@
 # -----------------------------------------------------------
 #
 
-cd openwrt/package
+cd lede/package
 rm -rf lean/luci-app-docker
 git clone https://github.com/u0225/package-others.git package-others
 cd package-others
