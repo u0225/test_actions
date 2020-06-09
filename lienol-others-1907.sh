@@ -3,7 +3,6 @@
 #
 
 cd package
-rm -rf lean
 rm -rf default-settings
 git clone https://github.com/fw876/helloworld.git
 # git clone https://github.com/rufengsuixing/luci-app-adguardhome.git
