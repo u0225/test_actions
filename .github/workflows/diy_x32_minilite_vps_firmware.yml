@@ -18,8 +18,8 @@ name: OpenWrt_x86_32_minilite_vps_drive
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -101,11 +101,11 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
+          ./diy/others.sh
           cd lede
           cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
           # ../$BRANCH_SET
-          ../others.sh
           chmod -R 775 ../
 
       - name: Free up disk space

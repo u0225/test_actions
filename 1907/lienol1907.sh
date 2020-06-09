@@ -2,6 +2,8 @@
 # -----------------------------------------------------------
 #
 
+git clone https://github.com/u0225/package-others.git package-others
+
 cd openwrt/package
 rm -rf diy
 rm -rf lean

@@ -13,25 +13,25 @@
 #
 #==========================================================
 
-name: OpenWrt-19.07_x86_64_minilite_drive
+name: lienol-OpenWrt-19.07_x86_64_minilite_vps_drive
 
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt-19.07_x86_64_minilite_vps_drive
+  TARGET: lienol-Openwrt-19.07_x86_64_minilite_vps_drive
   # REPO_URL: https://github.com/coolsnowwolf/lede
-  REPO_URL: https://github.com/u0225/openwrt-19.07
-  # REPO_URL: https://github.com/Lienol/openwrt
+  # REPO_URL: https://github.com/u0225/openwrt-19.07
+  REPO_URL: https://github.com/Lienol/openwrt
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
-  # REPO_BRANCH: dev-19.07
-  REPO_BRANCH: master
+  REPO_BRANCH: dev-19.07
+  # REPO_BRANCH: master
   # REPO_BRANCH: r8.1.12
   # REPO_BRANCH: r9.8.17
   # REPO_BRANCH: r9.10.10
@@ -45,6 +45,7 @@ env:
   ### -+-+-
   # VPS_S: 2SRPlus
   # VPS_S: PSW
+  # VPS_S: VPS
   ### -+-+-
   # VPS_M: vps/arm.ssr
   # VPS_M: vps/arm.psw
@@ -110,18 +111,12 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
+          ./1907/lienol1907.sh
           cd openwrt
-          # sed -i s"?#src-git packages https://github.com/coolsnowwolf/packages?src-git packages https://github.com/coolsnowwolf/packages?g" feeds.conf.default
-          # sed -i s"?#src-git luci https://github.com/coolsnowwolf/luci?src-git luci https://github.com/coolsnowwolf/luci?g" feeds.conf.default
-          sed -i s"?#src-git packages https://github.com/Lienol/openwrt-packages.git?src-git packages https://github.com/Lienol/openwrt-packages.git?g" feeds.conf.default
-          sed -i s"?#src-git luci https://github.com/Lienol/openwrt-luci.git?src-git luci https://github.com/Lienol/openwrt-luci.git?g" feeds.conf.default
-          #
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # ../$BRANCH_SET
-          # sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
+          sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
           # sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
-          #
-          ../others-1907.sh
           chmod -R 775 ../
 
       - name: Free up disk space
@@ -160,10 +155,10 @@ jobs:
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
-          cat opwrt-1907/x64 >> openwrt/.config
-          cat opwrt-1907/drive >> openwrt/.config
-          cat opwrt-1907/mini-lite >> openwrt/.config
-          cat opwrt-1907/samba4 >> openwrt/.config
+          cat 1907/x64 >> openwrt/.config
+          cat 1907/drive >> openwrt/.config
+          cat 1907/mini-lite >> openwrt/.config
+          cat 1907/samba4 >> openwrt/.config
           cat ${{ env.VPS_M }} >> openwrt/.config
           cd openwrt
           # ../$X86_DIY
