@@ -114,7 +114,7 @@ jobs:
           cd openwrt
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # ../$BRANCH_SET
-          # sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
+          sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
           # sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
           ../lienol-others-1907.sh
           chmod -R 775 ../
