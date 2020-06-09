@@ -8,11 +8,11 @@ rm -rf package/lean
 rm -rf package/OpenAppFilter
 rm -rf package/default-settings/files/zzz-default-settings
 
-cd .. && cd ..
-mv -f package-others/zzz-default-settings openwrt/package/default-settings/files
-mv -f package-others/* openwrt/package
+cd ..
+mv -f ../package-others/zzz-default-settings openwrt/package/default-settings/files
+mv -f ../package-others/* openwrt/package
 
-cd openwrt/package/lean/ssrplus
+cd package/lean/ssrplus
 git clone https://github.com/fw876/helloworld.git
 
 cd .. && cd ..
