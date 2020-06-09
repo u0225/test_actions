@@ -111,12 +111,12 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
+          lienol-others-1907.sh
           cd openwrt
           # cp ../${{ env.FEEDS_FILE }} feeds.conf.default
           # ../$BRANCH_SET
           sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
           # sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
-          ../lienol-others-1907.sh
           chmod -R 775 ../
 
       - name: Free up disk space

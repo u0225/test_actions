@@ -2,17 +2,17 @@
 # -----------------------------------------------------------
 #
 
-cd package
-rm -rf package/diy
-rm -rf package/lean
-rm -rf package/OpenAppFilter
-rm -rf package/default-settings/files/zzz-default-settings
+cd openwrt/package
+rm -rf diy
+rm -rf lean
+rm -rf OpenAppFilter
+rm -rf default-settings/files/zzz-default-settings
 
-cd ..
-mv -f ../package-others/zzz-default-settings openwrt/package/default-settings/files
-mv -f ../package-others/* openwrt/package
+cd .. && cd ..
+mv -f package-others/zzz-default-settings openwrt/package/default-settings/files
+mv -f package-others/* openwrt/package
 
-cd package/lean/ssrplus
+cd openwrt/package/lean/ssrplus
 git clone https://github.com/fw876/helloworld.git
 
 cd .. && cd ..
