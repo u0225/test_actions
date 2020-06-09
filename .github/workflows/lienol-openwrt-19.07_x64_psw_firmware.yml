@@ -44,14 +44,14 @@ env:
   # BRANCH_SET: armt/r20.sh
   ### -+-+-
   # VPS_S: 2SRPlus
-  VPS_S: PSW
-  # VPS_S: VPS
+  # VPS_S: PSW
+  VPS_S: VPS
   ### -+-+-
   # VPS_M: vps/arm.ssr
   # VPS_M: vps/arm.psw
   # VPS_M: vps/x86.ssr
-  VPS_M: vps/x86.psw
-  # VPS_M: vps/x86.vps
+  # VPS_M: vps/x86.psw
+  VPS_M: vps/x86.vps
   ### -+-+-
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
