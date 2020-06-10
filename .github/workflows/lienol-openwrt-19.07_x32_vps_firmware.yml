@@ -155,7 +155,7 @@ jobs:
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
-          cat 1907/x64 >> openwrt/.config
+          cat 1907/x32 >> openwrt/.config
           cat 1907/drive >> openwrt/.config
           cat 1907/mini-lite >> openwrt/.config
           cat 1907/samba4 >> openwrt/.config

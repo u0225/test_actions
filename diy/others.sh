@@ -6,8 +6,8 @@ cd lede/package
 rm -rf lean/luci-app-docker
 git clone https://github.com/u0225/package-others.git package-others
 cd package-others
-rm -rf lean && rm -rf Makefile && rm -rf target.mk && rm -rf zzz-default-settings
-rm -rf diy/luci-app-syncthing && rm -rf diy/luci-app-tcpdump && rm -rf diy/nps && rm -rf diy/syncthing
+rm -rf lean && rm -rf diy && rm -rf Makefile && rm -rf target.mk && rm -rf zzz-default-settings
+# rm -rf diy/luci-app-syncthing && rm -rf diy/luci-app-tcpdump && rm -rf diy/nps && rm -rf diy/syncthing
 cd others
 # git clone https://github.com/vernesong/OpenClash.git
 # git clone https://github.com/garypang13/luci-app-eqos.git
