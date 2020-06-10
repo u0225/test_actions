@@ -2,15 +2,21 @@
 # -----------------------------------------------------------
 #
 
-cd lede/package
-rm -rf lean/luci-app-docker
-rm -rf lean/luci-app-verysync
-rm -rf lean/verysync
 git clone https://github.com/u0225/package-others.git package-others
-cd package-others
-rm -rf lean && rm -rf .git && rm -rf Makefile && rm -rf target.mk && rm -rf zzz-default-settings
-# rm -rf diy/luci-app-syncthing && rm -rf diy/luci-app-tcpdump && rm -rf diy/nps && rm -rf diy/syncthing
-cd others
+rm -rf package-others/lean && rm -rf package-others/.git && rm -rf package-others/Makefile && rm -rf package-others/target.mk && rm -rf package-others/zzz-default-settings
+rm -rf package-others/others/luci-app-verysync && rm -rf package-others/others/verysync && rm -rf package-others/others/luci-app-diskman
+
+rm -rf lede/package/lean/luci-lib-docker && rm -rf lede/package/lean/luci-app-docker && rm -rf lede/package/lean/luci-app-dockerman
+
+#
+# 使用最新版本的dockerman和luci-lib-docker
+#
+# rm -rf package-others/others/luci-app-dockerman && rm -rf package-others/others/luci-lib-docker
+# git clone https://github.com/lisaac/luci-app-dockerman.git lede/package/lean/luci-app-dockerman && git clone https://github.com/lisaac/luci-lib-docker.git lede/package/lean/luci-lib-docker
+
+cp -rf package-others/* lede/package && rm -rf package-others
+
+cd lede/package/others
 # git clone https://github.com/vernesong/OpenClash.git
 # git clone https://github.com/garypang13/luci-app-eqos.git
 # git clone https://github.com/fw876/helloworld.git
@@ -23,7 +29,6 @@ git clone https://github.com/Aslin-Ameng/luci-theme-Night.git
 git clone https://github.com/rufengsuixing/luci-app-autoipsetadder.git
 # git clone https://github.com/destan19/OpenAppFilter.git
 git clone https://github.com/tty228/luci-app-serverchan.git
-git clone https://github.com/lisaac/luci-app-dockerman
 # git clone https://github.com/u0225/OpenClash.git
 # git clone https://github.com/u0225/luci-app-aliddns.git
 # git clone https://github.com/u0225/luci-app-dnspod.git

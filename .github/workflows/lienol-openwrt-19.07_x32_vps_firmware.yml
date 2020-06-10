@@ -28,6 +28,7 @@ env:
   # REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/openwrt-19.07
   REPO_URL: https://github.com/Lienol/openwrt
+  # REPO_URL: https://github.com/u0225/lienol-openwrt
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
   REPO_BRANCH: dev-19.07
