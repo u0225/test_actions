@@ -4,9 +4,11 @@
 
 cd lede/package
 rm -rf lean/luci-app-docker
+rm -rf lean/luci-app-verysync
+rm -rf lean/verysync
 git clone https://github.com/u0225/package-others.git package-others
 cd package-others
-rm -rf lean && rm -rf Makefile && rm -rf target.mk && rm -rf zzz-default-settings
+rm -rf lean && rm -rf .git && rm -rf Makefile && rm -rf target.mk && rm -rf zzz-default-settings
 # rm -rf diy/luci-app-syncthing && rm -rf diy/luci-app-tcpdump && rm -rf diy/nps && rm -rf diy/syncthing
 cd others
 # git clone https://github.com/vernesong/OpenClash.git

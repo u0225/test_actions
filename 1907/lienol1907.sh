@@ -14,7 +14,7 @@ cd .. && cd ..
 mv -f package-others/Makefile openwrt/target/linux/x86
 mv -f package-others/target.mk openwrt/include
 mv -f package-others/zzz-default-settings openwrt/package/default-settings/files
-# rm -rf package-others/diy
+rm -rf package-others/.git
 cp -rf package-others/* openwrt/package
 
 cd openwrt/package/lean/ssrplus
