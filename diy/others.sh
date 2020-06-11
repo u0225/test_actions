@@ -7,6 +7,13 @@ rm -rf package-others/lean && rm -rf package-others/.git && rm -rf package-other
 rm -rf package-others/others/luci-app-verysync && rm -rf package-others/others/verysync && rm -rf package-others/others/luci-app-diskman
 
 rm -rf lede/package/lean/luci-lib-docker && rm -rf lede/package/lean/luci-app-docker && rm -rf lede/package/lean/luci-app-dockerman
+rm -rf lede/package/diy && rm -rf lede/package/others
+
+#
+# 使用package-others的dockerman
+#
+cp -rf package-others/others/luci-app-dockerman lede/package/lean && cp -rf package-others/others/luci-lib-docker lede/package/lean
+rm -rf package-others/others/luci-app-dockerman && rm -rf package-others/others/luci-lib-docker
 
 #
 # 使用最新版本的dockerman和luci-lib-docker

@@ -4,12 +4,18 @@
 
 git clone https://github.com/u0225/package-others.git package-others
 rm -rf openwrt/package/diy && rm -rf openwrt/package/lean && rm -rf openwrt/package/OpenAppFilter
-rm -rf openwrt/package/default-settings/files/zzz-default-settings
+rm -rf openwrt/package/default-settings/files/zzz-default-settings && rm -rf openwrt/package/others
 
 mv -f package-others/Makefile openwrt/target/linux/x86 && mv -f package-others/target.mk openwrt/include
 mv -f package-others/zzz-default-settings openwrt/package/default-settings/files
 
 rm -rf package-others/.git && cp -rf package-others/* openwrt/package && rm -rf package-others
+
+#
+# 使用package-others的dockerman
+#
+cp -rf openwrt/package/others/luci-app-dockerman openwrt/package/lean && cp -rf openwrt/package/others/luci-lib-docker openwrt/package/lean
+rm -rf openwrt/package/others/luci-app-dockerman && rm -rf openwrt/package/others/luci-lib-docker
 
 git clone https://github.com/fw876/helloworld.git openwrt/package/lean/ssrplus/luci-app-ssrplus
 
