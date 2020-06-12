@@ -18,8 +18,8 @@ name: OpenWrt_x86_64_minilite_vps_drive
 on:
   # release:
   #   types: [published]
-  watch:
-    types: [started]
+  # watch:
+  #   types: [started]
   schedule:
     - cron: 00 10 * * 6
 
