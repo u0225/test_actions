@@ -18,8 +18,8 @@ name: lienol-OpenWrt-19.07_x86_64_minilite_PSW_drive
 on:
   # release:
   #   types: [published]
-  watch:
-    types: [started]
+  # watch:
+  #   types: [started]
   schedule:
     - cron: 00 10 * * 6
 

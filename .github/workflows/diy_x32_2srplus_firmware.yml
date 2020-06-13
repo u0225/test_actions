@@ -13,7 +13,7 @@
 #
 #==========================================================
 
-name: OpenWrt_x86_32_Generic_full_drive
+name: OpenWrt_x86_32_Generic_full_2SRPLUS_drive
 
 on:
   # release:
@@ -24,7 +24,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_x86_32_full_drive
+  TARGET: Openwrt_x86_32_full_2SRPLUS_drive
   REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
@@ -40,7 +40,7 @@ env:
   # BRANCH_SET: armt/r89.sh
   # BRANCH_SET: armt/r20.sh
   ### -+-+-
-  VPS_S: 2SRPlus
+  # VPS_S: 2SRPlus
   # VPS_S: PSW
   ### -+-+-
   # VPS_M: vps/arm.ssr
@@ -100,11 +100,9 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
           chmod -R 775 ./
-          cd lede
-          cp ../${{ env.FEEDS_FILE }} feeds.conf.default
-          ../$BRANCH_SET
-          ../others.sh
-          chmod -R 775 ../
+          cp ../${{ env.FEEDS_FILE }} lede/feeds.conf.default
+          ./diy/others.sh
+          ./$BRANCH_SET
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -181,7 +179,7 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_ipk
+          name: ${{ env.date }}_${{ env.TARGET }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
@@ -198,7 +196,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find lede/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp lede/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.VPS_S }}.config
+          cp lede/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -207,5 +205,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_firmware
+          name: ${{ env.date }}_${{ env.TARGET }}_firmware
           path: ${{ env.FIRMWARE }}
