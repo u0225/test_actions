@@ -7,9 +7,8 @@
 # =======================================================================
 # 下面这项是为r20.5.20或者是20200416(master)之后源码使用的，之前的不能用 #
 #                                                                        #
-sed -i s"/#src-git helloworld/src-git helloworld/g" feeds.conf.default
+sed -i s"/#src-git helloworld/src-git helloworld/g" lede/feeds.conf.default
 
-cd ..
 cd armt
 echo "sed -i 's/reg = <0x50000 0x7b0000>;/reg = <0x50000 0xfb0000>;/g' target/linux/ramips/dts/mt7620n_zbtlink_zbt-wr8305rt.dts" >> armt-set.sh
 echo "CONFIG_TARGET_ramips_mt7620_DEVICE_xiaomi_miwifi-mini=y" >> miwifi_mini-16m
