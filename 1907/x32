@@ -7,3 +7,4 @@ CONFIG_TARGET_x86_generic=y
 CONFIG_TARGET_x86_generic_Generic=y
 
 CONFIG_PACKAGE_luci-app-ttyd=y
+# CONFIG_PACKAGE_luci-app-dockerman_INCLUDE_ttyd is not set
