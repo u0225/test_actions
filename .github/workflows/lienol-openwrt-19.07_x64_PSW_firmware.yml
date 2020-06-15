@@ -18,8 +18,8 @@ name: lienol-OpenWrt-19.07_x86_64_minilite_drive
 on:
   # release:
   #   types: [published]
-  watch:
-    types: [started]
+  # watch:
+  #   types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -32,8 +32,8 @@ env:
   # REPO_BRANCH: master
   ### -+-+-
   # VPS_S: SSRPlus
-  VPS_S: SSRPlus_new
-  # VPS_S: PSW
+  # VPS_S: SSRPlus_new
+  VPS_S: PSW
   ### -+-+-
   # VPS_M: vps/x86.ssr
   # VPS_M: vps/x86.psw

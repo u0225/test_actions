@@ -13,18 +13,18 @@
 #
 #==========================================================
 
-name: OpenWrt_x86_32_Generic_minilite_PSW_drive
+name: OpenWrt_x86_32_Generic_minilite_drive
 
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_x86_32_minilite_PSW_drive
+  TARGET: Openwrt_x86_32_minilite_drive
   REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
@@ -40,13 +40,14 @@ env:
   # BRANCH_SET: armt/r89.sh
   # BRANCH_SET: armt/r20.sh
   ### -+-+-
-  # VPS_S: 2SRPlus
-  # VPS_S: PSW
+  # VPS_S: SSRPlus
+  # VPS_S: SSRPlus_new
+  VPS_S: PSW
   ### -+-+-
   # VPS_M: vps/arm.ssr
   # VPS_M: vps/arm.psw
   # VPS_M: vps/x86.ssr
-  VPS_M: vps/x86.psw
+  # VPS_M: vps/x86.psw
   ### -+-+-
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
@@ -96,6 +97,29 @@ jobs:
           echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
 
+      - name: Get current psw
+        id: psw
+        if: env.VPS_S == 'PSW'
+        run: |
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" diy/others.sh
+          echo "::set-env name=psw::$(echo 'cat vps/x86.psw >> lede/.config')"
+
+      - name: Get current ssrplus
+        id: ssrplus
+        if: env.VPS_S == 'SSRPlus'
+        run: |
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" diy/others.sh
+          echo "::set-env name=ssrplus::$(echo 'cat vps/x86.ssr >> lede/.config')"
+
+      - name: Get current ssrplus_new
+        id: ssrplus_new
+        if: env.VPS_S == 'SSRPlus_new'
+        run: |
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" diy/others.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" diy/others.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" diy/others.sh
+          echo "::set-env name=ssrplus_new::$(echo 'cat vps/x86.ssr >> lede/.config')"
+
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
@@ -136,7 +160,10 @@ jobs:
           cat diy/samba4 >> lede/.config
           # cat diy/samba36 >> lede/.config
           # cat diy/mwan3 >> lede/.config
-          cat ${{ env.VPS_M }} >> lede/.config
+          # cat ${{ env.VPS_M }} >> lede/.config
+          ${{ env.psw }}
+          ${{ env.ssrplus }}
+          ${{ env.ssrplus_new }}
           cd lede
           ../$X86_DIY
           ./scripts/feeds install -a
@@ -179,7 +206,7 @@ jobs:
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_ipk
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
@@ -196,7 +223,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find lede/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp lede/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}.config
+          cp lede/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.VPS_S }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -205,5 +232,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_firmware
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_firmware
           path: ${{ env.FIRMWARE }}
