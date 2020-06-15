@@ -31,6 +31,10 @@ env:
   REPO_BRANCH: dev-19.07
   # REPO_BRANCH: master
   ### -+-+-
+  # VPS_S: 2SRPlus
+  # VPS_S: 2SRPlus_new
+  VPS_S: PSW
+  ### -+-+-
   # VPS_M: vps/x86.ssr
   VPS_M: vps/x86.psw
   ### -+-+-
@@ -87,13 +91,34 @@ jobs:
           echo "::set-env name=date1::$(date +'%y%m%d')"
           echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
+          chmod -R 775 ./
+
+      - name: Get current psw
+        id: psw
+        if: env.VPS_S == 'PSW'
+        run: |
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+
+      - name: Get current 2srplus
+        id: 2srplus
+        if: env.VPS_S == '2SRPlus'
+        run: |
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+
+      - name: Get current 2srplus_new
+        id: 2srplus_new
+        if: env.VPS_S == '2SRPlus_new'
+        run: |
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
 
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
           ./1907/lienol1907.sh
-          sed -i s"/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
+          sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'

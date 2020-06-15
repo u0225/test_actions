@@ -6,17 +6,18 @@ git clone https://github.com/u0225/package-others.git package-others
 
 # -----------------------------------
 #
-# 使用 package-others 的 200416/ssrplus 和 passwall
+# 使用 package-others 的 200416/ssrplus 或者 passwall
 #
 
-cp -rf package-others/vps/luci-app-ssr-plus lede/package/lean && cp -rf package-others/vps/psw_single lede/package/lean/luci-app-passwall && rm -rf package-others/vps
+cp -rf package-others/vps/luci-app-ssr-plus lede/package/lean && rm -rf package-others/vps
+cp -rf package-others/vps/psw_single lede/package/lean/luci-app-passwall && rm -rf package-others/vps
 
 # ---------------------
 #
-# 使用最新版本的 ssrplus 和 package-others 的 passwall
+# 使用最新版本的 ssrplus # 或者 package-others 的 passwall
 #
 
-# git clone https://github.com/fw876/helloworld.git lede/package/lean/luci-app-ssr-plus && cp -rf package-others/vps/psw_single lede/package/lean/luci-app-passwall && rm -rf package-others/vps
+# git clone https://github.com/fw876/helloworld.git lede/package/lean/luci-app-ssr-plus && rm -rf package-others/vps
 
 # -------------------------------------------------------
 #
