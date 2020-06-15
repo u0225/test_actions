@@ -18,8 +18,8 @@ name: lienol-OpenWrt-19.07_x86_64_minilite_PSW_drive
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -93,9 +93,7 @@ jobs:
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
           ./1907/lienol1907.sh
-          cd openwrt
-          sed -i s"/src-git lienol/# src-git lienol/g" feeds.conf.default
-          chmod -R 775 ../
+          sed -i s"/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
