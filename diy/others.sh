@@ -37,19 +37,19 @@ cp -rf package-others/vps/luci-app-ssr-plus lede/package/lean && cp -rf package-
 # 使用最新版本的 adguardhome/dockerman/OpenAppFilter
 #
 
-git clone https://github.com/rufengsuixing/luci-app-adguardhome.git lede/package/lean
+git clone https://github.com/rufengsuixing/luci-app-adguardhome.git lede/package/lean/luci-app-adguardhome
 rm -rf package-others/others/luci-app-adguardhome && rm -rf package-others/others/adguardhome
 #
 rm -rf lede/package/lean/luci-lib-docker && rm -rf lede/package/lean/luci-app-docker && rm -rf lede/package/lean/luci-app-dockerman
 rm -rf package-others/others/luci-app-dockerman && rm -rf package-others/others/luci-lib-docker
 git clone https://github.com/lisaac/luci-app-dockerman.git lede/package/lean/luci-app-dockerman && git clone https://github.com/lisaac/luci-lib-docker.git lede/package/lean/luci-lib-docker
 #
-git clone https://github.com/destan19/OpenAppFilter.git lede/package/lean && rm -rf package-others/others/OpenAppFilter
+git clone https://github.com/destan19/OpenAppFilter.git lede/package/lean/OpenAppFilter && rm -rf package-others/others/OpenAppFilter
 
 # -----------
 
 rm -rf package-others/others/luci-app-diskman
-cp -rf package-others/openwrt-diy lede/package && cp -rf package-others/others lede/package && rm -rf package-others
+cp -rf package-others/openwrt-diy lede/package/diy && cp -rf package-others/others lede/package && rm -rf package-others
 
 #
 
