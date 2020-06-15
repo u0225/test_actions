@@ -13,7 +13,7 @@
 #
 #==========================================================
 
-name: lienol-OpenWrt-19.07_x86_32_minilite_PSW_drive
+name: lienol-OpenWrt-19.07_x86_32_minilite_drive
 
 on:
   # release:
@@ -24,19 +24,19 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: lienol-Openwrt-19.07_x86_32_minilite_PSW_drive
+  TARGET: lienol-Openwrt-19.07_x86_32_minilite_drive
   REPO_URL: https://github.com/Lienol/openwrt
   # REPO_URL: https://github.com/u0225/lienol-openwrt
   ### -+-+-
   REPO_BRANCH: dev-19.07
   # REPO_BRANCH: master
   ### -+-+-
-  # VPS_S: 2SRPlus
-  # VPS_S: 2SRPlus_new
+  # VPS_S: SSRPlus
+  # VPS_S: SSRPlus_new
   VPS_S: PSW
   ### -+-+-
   # VPS_M: vps/x86.ssr
-  VPS_M: vps/x86.psw
+  # VPS_M: vps/x86.psw
   ### -+-+-
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
@@ -98,20 +98,23 @@ jobs:
         if: env.VPS_S == 'PSW'
         run: |
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+          echo "::set-env name=psw::$(echo 'cat vps/x86.psw >> openwrt/.config')"
 
-      - name: Get current 2srplus
+      - name: Get current ssrplus
         id: ssrplus
-        if: env.VPS_S == '2SRPlus'
+        if: env.VPS_S == 'SSRPlus'
         run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+          echo "::set-env name=ssrplus::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
 
-      - name: Get current 2srplus_new
+      - name: Get current ssrplus_new
         id: ssrplus_new
-        if: env.VPS_S == '2SRPlus_new'
+        if: env.VPS_S == 'SSRPlus_new'
         run: |
           sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+          echo "::set-env name=ssrplus_new::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
@@ -148,7 +151,10 @@ jobs:
           cat 1907/drive >> openwrt/.config
           cat 1907/mini-lite >> openwrt/.config
           cat 1907/samba4 >> openwrt/.config
-          cat ${{ env.VPS_M }} >> openwrt/.config
+          # cat ${{ env.VPS_M }} >> openwrt/.config
+          ${{ env.psw }}
+          ${{ env.ssrplus }}
+          ${{ env.ssrplus_new }}
           cd openwrt
           # ../$X86_DIY
           ./scripts/feeds install -a
@@ -196,7 +202,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk
-          name: ${{ env.date }}_${{ env.TARGET }}_ipk
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
@@ -213,7 +219,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find openwrt/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined-squashfs*.*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "config.*" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}.config
+          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.VPS_S }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -246,8 +252,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         with:
-          tag_name: ${{ env.date }}_${{ env.TARGET }}
-          release_name: ${{ env.date }}_${{ env.TARGET }}
+          tag_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}
+          release_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}
           body: |
               澧欏唴鍔犻€熶笅杞?
               
@@ -273,5 +279,5 @@ jobs:
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
           # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware
-          name: ${{ env.date }}_${{ env.TARGET }}_firmware
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_firmware
           path: ${{ env.FIRMWARE }}
