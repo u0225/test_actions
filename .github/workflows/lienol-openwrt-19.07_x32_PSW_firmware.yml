@@ -100,13 +100,13 @@ jobs:
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
 
       - name: Get current 2srplus
-        id: 2srplus
+        id: ssrplus
         if: env.VPS_S == '2SRPlus'
         run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
 
       - name: Get current 2srplus_new
-        id: 2srplus_new
+        id: ssrplus_new
         if: env.VPS_S == '2SRPlus_new'
         run: |
           sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
