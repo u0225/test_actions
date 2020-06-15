@@ -16,10 +16,10 @@ cp -rf package-others/lean openwrt/package && rm -rf package-others/others/luci-
 
 # -----------------------------------
 #
-# 使用 package-others 的 200416/psw
+# 使用 package-others 的 200416/ssrplus 和 passwall
 #
 
-cd -rf package-others/vps/psw_single openwrt/package/lean/luci-app-passwall && rm -rf package-others/vps
+cp -rf package-others/vps/psw_single openwrt/package/lean/luci-app-passwall && cp -rf package-others/vps/luci-app-ssr-plus openwrt/package/lean && rm -rf package-others/vps
 
 # -------------------------------------------------------
 #
