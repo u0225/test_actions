@@ -19,15 +19,15 @@ cp -rf package-others/lean openwrt/package && rm -rf package-others/others/luci-
 # 使用 package-others 的 200416/ssrplus 或者 passwall
 #
 
-cp -rf package-others/vps/psw_single openwrt/package/lean/luci-app-passwall && rm -rf package-others/vps
-cp -rf package-others/vps/luci-app-ssr-plus openwrt/package/lean && rm -rf package-others/vps
+cp -rf package-others/vps/psw_single openwrt/package/lean/luci-app-passwall && rm -rf package-others/vps && rm -rf openwrt/package/lean/ssrplus
+cp -rf package-others/vps/luci-app-ssr-plus openwrt/package/lean/ssrplus && rm -rf package-others/vps
 
 # ---------------------
 #
 # 使用最新版本的 ssrplus # 或者 package-others 的 passwall
 #
 
-# git clone https://github.com/fw876/helloworld.git openwrt/package/lean/luci-app-ssr-plus && rm -rf package-others/vps
+# git clone https://github.com/fw876/helloworld.git openwrt/package/lean/ssrplus/luci-app-ssr-plus && rm -rf package-others/vps
 
 # -------------------------------------------------------
 #
