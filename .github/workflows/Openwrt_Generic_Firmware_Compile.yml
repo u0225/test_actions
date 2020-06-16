@@ -84,9 +84,11 @@ jobs:
         id: vps_m
         run: |
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_M }}.${{ env.VPS_S }} >> openwrt/.config')"
-          if (${{ env.VPS_S }} == 'psw') ; then
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          fi
+            if ${{ env.VPS_S }} == psw ; then
+              sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+            elif ${{ env.VPS_S }} == ssr ; then
+              sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+            fi
 
       - name: Clone openwrt
         run: |
