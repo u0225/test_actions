@@ -85,15 +85,17 @@ jobs:
         id: vps_m
         run: |
           #!/bin/bash
-          for cpu in x86 arm ; do
-            for vps in ssr psw ssr_new ; do
+          for cpu in x86 arm ; do {
+            for vps in ssr psw ssr_new ; do {
               if [[ ${{ env.CPU_M }}.${{ env.VPS_S }} == '$cpu.$vps' ]] ; then
               echo "::set-env name=vps_m::$(echo 'cat vps/$cpu.$vps >> openwrt/.config')"
               else
               sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
               fi
+            }
             done
-         done
+          }
+          done
 
       - name: Clone openwrt
         run: |
