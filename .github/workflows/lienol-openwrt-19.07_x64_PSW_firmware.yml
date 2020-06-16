@@ -101,15 +101,15 @@ jobs:
       - name: Set vps_m
         id: vps_m
         run: |
-          for cpu_m in x86_32 x86_64 arm_ar71xx arm_mt7620 do {
-            for vps_m in ssrplus ssrplus_new psw do {
-               if [[ "$cpu_m" == "${{ env.CPU_M }}" ]]; then
-                   echo "::set-env name=cpu::$(echo '$cpu_m')"
-               elif [[ "$vps_m" == "${{ env.VPS_S }}" ]]; then
-                   echo "::set-env name=vps::$(echo '$vps_m')"
-               else
-                   echo "::set-env name=vps_m::$(echo 'cat vps/$cpu.$vps >> openwrt/.config')"
-               fi
+          for cpu_m in x86_32 x86_64 arm_ar71xx arm_mt7620;do {
+            for vps_m in ssrplus ssrplus_new psw;do {
+              if [[ "$cpu_m" == "${{ env.CPU_M }}" && "$vps_m" == "${{ env.VPS_S }}" ]]; then
+                echo "::set-env name=cpu::$(echo '$cpu_m')" && {
+                echo "::set-env name=vps::$(echo '$vps_m')"
+                }
+              else
+                echo "::set-env name=vps_m::$(echo 'cat vps/$cpu.$vps >> openwrt/.config')"
+              fi
             }
             done
           }
