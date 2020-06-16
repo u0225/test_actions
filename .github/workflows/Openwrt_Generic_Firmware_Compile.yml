@@ -20,8 +20,8 @@ on:
   #   types: [published]
   watch:
     types: [started]
-  schedule:
-    - cron: 00 10 * * 6
+  # schedule:
+  #   - cron: 00 10 * * 6
 
 env:
   TARGET: lienol-Openwrt-19.07_x86_64_minilite_drive
