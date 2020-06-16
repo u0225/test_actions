@@ -86,7 +86,7 @@ jobs:
         id: vps_m
         run: |
           if [[ ${{ env.CPU_M }}.${{ env.VPS_S }} == 'x86.psw' ]] ; then
-            echo "::set-env name=vps_m::$(echo 'cat vps/$cpu.${{ env.VPS_S }} >> openwrt/.config')"
+            echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_M }}.${{ env.VPS_S }} >> openwrt/.config')"
           else
             sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
           fi
