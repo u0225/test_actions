@@ -107,6 +107,10 @@ jobs:
                    echo "::set-env name=cpu::$(echo 'x86')"
                elif [ ${{ env.CPU_M }} == 'x86_64' ]; then
                    echo "::set-env name=cpu::$(echo 'x86')"
+               elif [ ${{ env.CPU_M }} == 'arm_ar71xx' ]; then
+                   echo "::set-env name=cpu::$(echo 'arm')"
+               elif [ ${{ env.CPU_M }} == 'arm_mt7620' ]; then
+                   echo "::set-env name=cpu::$(echo 'arm')"
                elif [ ${{ env.VPS_S }} == 'PSW' ]; then
                    echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.cpu }}.${{ env.VPS_S }} >> openwrt/.config')"
                else
