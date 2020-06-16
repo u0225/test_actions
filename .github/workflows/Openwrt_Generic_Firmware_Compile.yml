@@ -18,8 +18,8 @@ name: Openwrt_Generic_Firmware_Compile
 on:
   # release:
   #   types: [published]
-  watch:
-    types: [started]
+  # watch:
+  #   types: [started]
   schedule:
     - cron: 00 10 * * 6
 

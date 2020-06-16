@@ -18,8 +18,8 @@ name: lienol-OpenWrt-19.07_x86_64_minilite_drive
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -93,28 +93,16 @@ jobs:
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
           chmod -R 775 ./
 
-      - name: Get current psw
-        id: psw
-        if: env.VPS_S == 'PSW'
+      - name: Set vps_m
+        id: vps_m
         run: |
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          echo "::set-env name=psw::$(echo 'cat vps/x86.psw >> openwrt/.config')"
-
-      - name: Get current ssrplus
-        id: ssrplus
-        if: env.VPS_S == 'SSRPlus'
-        run: |
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
-          echo "::set-env name=ssrplus::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
-
-      - name: Get current ssrplus_new
-        id: ssrplus_new
-        if: env.VPS_S == 'SSRPlus_new'
-        run: |
-          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          echo "::set-env name=ssrplus::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
+          for v in SSRPlus SSRPlus_new PSW
+          do
+            if [ ${{ env.VPS_S }} == '$v' ];then
+            echo "::set-env name=vps_m::$(echo 'cat vps/$v >> openwrt/.config')"
+            sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+            fi
+          done
 
       - name: Clone openwrt
         run: |
@@ -152,9 +140,7 @@ jobs:
           cat 1907/mini-lite >> openwrt/.config
           cat 1907/samba4 >> openwrt/.config
           # cat ${{ env.VPS_M }} >> openwrt/.config
-          ${{ env.psw }}
-          ${{ env.ssrplus }}
-          ${{ env.ssrplus_new }}
+          ${{ env.vps_m }}
           cd openwrt
           # ../$X86_DIY
           ./scripts/feeds install -a
