@@ -87,6 +87,7 @@ jobs:
         run: |
           for cpu in x86 arm ; do
             for vps in ssr psw ; do
+            echo $cpu.$vps
                if [[ $cpu.$vps = ${{ env.CPU_M }}.${{ env.VPS_S }} ]] ; then
                  echo "::set-env name=vps_m::$(echo 'cat vps/$cpu.${{ env.VPS_S }} >> openwrt/.config')"
                  else
