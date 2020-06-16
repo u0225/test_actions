@@ -18,8 +18,8 @@ name: lienol-OpenWrt-19.07_x86_64_minilite_drive
 on:
   # release:
   #   types: [published]
-  watch:
-    types: [started]
+  # watch:
+  #   types: [started]
   schedule:
     - cron: 00 10 * * 6
 
@@ -98,23 +98,28 @@ jobs:
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
           chmod -R 775 ./
 
-      - name: Set vps_m
-        id: vps_m
+      - name: Get current psw
+        id: psw
+        if: env.VPS_S == 'PSW'
         run: |
-          for cpu_m in x86_32 x86_64 arm_ar71xx arm_mt7620;do {
-            for vps_m in ssrplus ssrplus_new psw;do {
-              if [[ "$cpu_m" == "${{ env.CPU_M }}" && "$vps_m" == "${{ env.VPS_S }}" ]]; then
-                echo "::set-env name=cpu::$(echo '$cpu_m')" && {
-                echo "::set-env name=vps::$(echo '$vps_m')"
-                }
-              else
-                echo "::set-env name=vps_m::$(echo 'cat vps/$cpu.$vps >> openwrt/.config')"
-              fi
-            }
-            done
-          }
-          done
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+          echo "::set-env name=psw::$(echo 'cat vps/x86.psw >> openwrt/.config')"
+
+      - name: Get current ssrplus
+        id: ssrplus
+        if: env.VPS_S == 'SSRPlus'
+        run: |
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+          echo "::set-env name=ssrplus::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
+
+      - name: Get current ssrplus_new
+        id: ssrplus_new
+        if: env.VPS_S == 'SSRPlus_new'
+        run: |
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+          echo "::set-env name=ssrplus_new::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
