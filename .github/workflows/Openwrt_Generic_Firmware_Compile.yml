@@ -114,7 +114,7 @@ jobs:
           for v in SSRPlus SSRPlus_new PSW
           do
             if [ ${{ env.VPS_S }} == '$v' ];then
-            echo "::set-env name=vps_m::$(echo 'cat vps/x86.$v >> openwrt/.config')"
+            echo "::set-env name=vps_m::$(echo 'cat vps/$v >> openwrt/.config')"
             fi
           done
 
