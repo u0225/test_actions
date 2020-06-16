@@ -85,7 +85,7 @@ jobs:
         run: |
           #!/bin/bash
           for vps in ssr psw ssr_new ; do {
-            if [ ${{ env.VPS_S }} == '$vps' ] ; then
+            if ${{ env.VPS_S }} == '$vps' ; then
               echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_M }}.$vps >> openwrt/.config')"
             else
               sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
