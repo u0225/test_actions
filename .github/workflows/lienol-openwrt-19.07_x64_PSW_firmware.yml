@@ -35,6 +35,11 @@ env:
   # VPS_S: SSRPlus_new
   VPS_S: PSW
   ### -+-+-
+  # CPU_M: x86_32
+  CPU_M: x86_64
+  # CPU_M: arm_ar71xx
+  # CPU_M: arm_mt7620
+  ### -+-+-
   # VPS_M: vps/x86.ssr
   # VPS_M: vps/x86.psw
   ### -+-+-
@@ -96,10 +101,14 @@ jobs:
       - name: Set vps_m
         id: vps_m
         run: |
-          for vps in SSRPlus SSRPlus_new PSW
+          for cpu in x86 arm
           do {
-               if [ ${{ env.VPS_S }} = '$vps' ]; then
-                   echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.VPS_S }} >> openwrt/.config')"
+               if [ ${{ env.CPU_M }} == 'x86_32' ]; then
+                   echo "::set-env name=cpu::$(echo 'x86')"
+               elif [ ${{ env.CPU_M }} == 'x86_64' ]; then
+                   echo "::set-env name=cpu::$(echo 'x86')"
+               elif [ ${{ env.VPS_S }} == 'PSW' ]; then
+                   echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.cpu }}.${{ env.VPS_S }} >> openwrt/.config')"
                else
                    sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
                fi
