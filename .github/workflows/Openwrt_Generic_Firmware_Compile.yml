@@ -88,6 +88,7 @@ jobs:
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
           if $env.VPS_S = 'ssr'
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+          fi
 
       - name: Clone openwrt
         run: |
