@@ -31,14 +31,12 @@ env:
   REPO_BRANCH: dev-19.07
   # REPO_BRANCH: master
   ### -+-+-
-  # VPS_S: ssrplus
-  # VPS_S: ssrplus_new
-  VPS_S: psw
-  ### -+-+-
-  # CPU_M: x86_32
   CPU_M: x86
-  # CPU_M: arm_ar71xx
-  # CPU_M: arm_mt7620
+  # CPU_M: arm
+  ### -+-+-
+  VPS_S: ssr
+  # VPS_S: ssr_new
+  # VPS_S: psw
   ### -+-+-
   # VPS_M: vps/x86.ssr
   # VPS_M: vps/x86.psw
@@ -89,6 +87,21 @@ jobs:
             echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_M }}.${{ env.VPS_S }} >> openwrt/.config')"
           else
             sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+          fi
+          if [[ ${{ env.CPU_M }}.${{ env.VPS_S }} == 'x86.ssr' ]] ; then
+            echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_M }}.${{ env.VPS_S }} >> openwrt/.config')"
+          else
+            sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+          fi
+          if [[ ${{ env.CPU_M }}.${{ env.VPS_S }} == 'arm.psw' ]] ; then
+            echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_M }}.${{ env.VPS_S }} >> openwrt/.config')"
+          else
+            sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+          fi
+          if [[ ${{ env.CPU_M }}.${{ env.VPS_S }} == 'arm.ssr' ]] ; then
+            echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_M }}.${{ env.VPS_S }} >> openwrt/.config')"
+          else
+            sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
           fi
 
       - name: Clone openwrt
