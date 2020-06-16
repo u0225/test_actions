@@ -122,7 +122,7 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
-          # cp ./${{ env.FEEDS_FILE }} openwrt/feeds.conf.default
+          cp ./${{ env.FEEDS_FILE }} openwrt/feeds.conf.default
           ./diy/others.sh
           ./$BRANCH_SET
 
