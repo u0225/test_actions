@@ -83,11 +83,11 @@ jobs:
           chmod -R 775 ./
 
       - name: Set vps
-        id: vps
+        id: vps_m
         run: |
           for cpu in x86 arm ; do
             for vps in ssr psw ; do
-               if [[ $cpu.$vps = ${{ env.CPU_M }}.${{ env.VPS_S }} ; then
+               if [[ $cpu.$vps = ${{ env.CPU_M }}.${{ env.VPS_S }} ]] ; then
                  echo "::set-env name=vps_m::$(echo 'cat vps/$cpu.${{ env.VPS_S }} >> openwrt/.config')"
                  else
                  sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
