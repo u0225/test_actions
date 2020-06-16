@@ -78,7 +78,6 @@ jobs:
           echo "::set-env name=date1::$(date +'%y%m%d')"
           echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
-          mkdir -p openwrt/package/lean
           chmod -R 775 ./
 
       - name: Set vps
@@ -87,7 +86,7 @@ jobs:
           #!/bin/bash
           for cpu in x86 arm ; do {
             for vps in ssr psw ssr_new ; do {
-              if [[ ${{ env.CPU_M }}.${{ env.VPS_S }} == '$cpu.$vps' ]] ; then
+              if [[ ${{ env.CPU_M }}.${{ env.VPS_S }} = $cpu.$vps ]] ; then
               echo "::set-env name=vps_m::$(echo 'cat vps/$cpu.$vps >> openwrt/.config')"
               else
               sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
