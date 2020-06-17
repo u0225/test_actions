@@ -67,17 +67,23 @@ jobs:
       - name: Setup
         id: setup
         run: |
+          echo "::set-env name=CPU_S::$(echo 'x86')"
+          # echo "::set-env name=CPU_S::$(echo 'arm')"
+          # --------
           # echo "::set-env name=CPU_M::$(echo '32')"
           echo "::set-env name=CPU_M::$(echo '64')"
           # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
           # echo "::set-env name=CPU_M::$(echo 'wdr3320-16m')"
           # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
           # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
-          echo "::set-env name=CPU_S::$(echo 'x86')"
-          # echo "::set-env name=CPU_S::$(echo 'arm')"
+          # --------
           # echo "::set-env name=PATH_S::$(echo 'diy')"
           echo "::set-env name=PATH_S::$(echo '1907')"
           # echo "::set-env name=PATH_S::$(echo 'armt')"
+          # --------
+          # echo "::set-env name=others::$(echo 'others')"
+          echo "::set-env name=others::$(echo 'lienol1907')"
+          # --------
           echo "::set-env name=VPS_S::$(echo 'psw')"
           # echo "::set-env name=VPS_S::$(echo 'ssr')"
           # echo "::set-env name=VPS_S::$(echo 'ssr_new')"
@@ -116,24 +122,24 @@ jobs:
         id: psw
         if: env.VPS_S == 'psw'
         run: |
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.psw >> openwrt/.config')"
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_S }}/${{ env.others }}.sh
+          echo "::set-env name=vps_m::$(echo 'cat ${{ env.PATH_S }}/${{ env.CPU_S }}.psw >> openwrt/.config')"
 
       - name: Set ssr
         id: ssrplus
         if: env.VPS_S == 'ssr'
         run: |
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
-          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_S }}/${{ env.others }}.sh
+          echo "::set-env name=vps_m::$(echo 'cat ${{ env.PATH_S }}/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
       - name: Set ssr_new
         id: ssrplus_new
         if: env.VPS_S == 'ssr_new'
         run: |
-          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_S }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_S }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_S }}/${{ env.others }}.sh
+          echo "::set-env name=vps_m::$(echo 'cat ${{ env.PATH_S }}/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
