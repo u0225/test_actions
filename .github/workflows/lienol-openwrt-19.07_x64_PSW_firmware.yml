@@ -31,8 +31,8 @@ env:
   REPO_BRANCH: dev-19.07
   # REPO_BRANCH: master
   ### -+-+-
-  # VPS_S: ssrplus
-  # VPS_S: ssrplus_new
+  # VPS_S: ssr
+  # VPS_S: ssr_new
   VPS_S: psw
   ### -+-+-
   # CPU_M: x86_32
@@ -100,26 +100,26 @@ jobs:
 
       - name: Get current psw
         id: psw
-        if: env.VPS_S == 'PSW'
+        if: env.VPS_S == 'psw'
         run: |
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
           echo "::set-env name=psw::$(echo 'cat vps/x86.psw >> openwrt/.config')"
 
-      - name: Get current ssrplus
-        id: ssrplus
-        if: env.VPS_S == 'SSRPlus'
+      - name: Get current ssr
+        id: ssr
+        if: env.VPS_S == 'ssr'
         run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
-          echo "::set-env name=ssrplus::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
+          echo "::set-env name=ssr::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
 
-      - name: Get current ssrplus_new
-        id: ssrplus_new
-        if: env.VPS_S == 'SSRPlus_new'
+      - name: Get current ssr_new
+        id: ssr_new
+        if: env.VPS_S == 'ssr_new'
         run: |
           sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          echo "::set-env name=ssrplus_new::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
+          echo "::set-env name=ssr_new::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
@@ -157,7 +157,9 @@ jobs:
           cat 1907/mini-lite >> openwrt/.config
           cat 1907/samba4 >> openwrt/.config
           # cat ${{ env.VPS_M }} >> openwrt/.config
-          ${{ env.vps_m }}
+          ${{ env.psw }}
+          ${{ env.ssr }}
+          ${{ env.ssr_new }}
           cd openwrt
           # ../$X86_DIY
           ./scripts/feeds install -a

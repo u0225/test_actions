@@ -31,12 +31,14 @@ env:
   REPO_BRANCH: dev-19.07
   # REPO_BRANCH: master
   ### -+-+-
-  CPU_M: x86
-  # CPU_M: arm
-  ### -+-+-
-  VPS_S: ssr
+  # VPS_S: ssr
   # VPS_S: ssr_new
-  # VPS_S: psw
+  VPS_S: psw
+  ### -+-+-
+  # CPU_M: x86_32
+  CPU_M: x86_64
+  # CPU_M: arm_ar71xx
+  # CPU_M: arm_mt7620
   ### -+-+-
   # VPS_M: vps/x86.ssr
   # VPS_M: vps/x86.psw
@@ -71,6 +73,22 @@ jobs:
         with:
           ref: master
 
+      - name: Space cleanup
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
+          sudo -E apt-get update
+          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3.5 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget
+          # sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          curl -fsSL https://raw.githubusercontent.com/u0225/openwrt_lede_actions/master/.bashrc >> ~/.bashrc
+          sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+          df -h
+
       - name: Get current date
         id: date
         run: |
@@ -80,14 +98,29 @@ jobs:
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
           chmod -R 775 ./
 
-      - name: Set vps
-        id: vps_m
+      - name: Get current psw
+        id: psw
+        if: env.VPS_S == 'psw'
         run: |
-          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_M }}.${{ env.VPS_S }} >> openwrt/.config')"
-          if env.VPS_S == 'psw'
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          if env.VPS_S == 'ssr'
+          echo "::set-env name=psw::$(echo 'cat vps/x86.psw >> openwrt/.config')"
+          echo "::set-env name=psw::$(echo 'cat vps/arm.psw >> openwrt/.config')"
+
+      - name: Get current ssr
+        id: ssrplus
+        if: env.VPS_S == 'ssr'
+        run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+          echo "::set-env name=ssrplus::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
+
+      - name: Get current ssr_new
+        id: ssrplus_new
+        if: env.VPS_S == 'ssr_new'
+        run: |
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
+          echo "::set-env name=ssrplus_new::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
