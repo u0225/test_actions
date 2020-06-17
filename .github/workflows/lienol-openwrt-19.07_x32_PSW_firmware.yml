@@ -24,16 +24,12 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: lienol-Openwrt-19.07_x86_32_minilite_drive
+  TARGET: lienol-Openwrt-19.07_minilite_drive
   REPO_URL: https://github.com/Lienol/openwrt
   # REPO_URL: https://github.com/u0225/lienol-openwrt
   ### -+-+-
   REPO_BRANCH: dev-19.07
   # REPO_BRANCH: master
-  ### -+-+-
-  # VPS_S: ssr
-  # VPS_S: ssr_new
-  VPS_S: psw
   ### -+-+-
   # VPS_M: vps/x86.ssr
   # VPS_M: vps/x86.psw
@@ -68,6 +64,24 @@ jobs:
         with:
           ref: master
 
+      - name: Setup
+        id: setup
+        run: |
+          echo "::set-env name=CPU_M::$(echo '32')"
+          # echo "::set-env name=CPU_M::$(echo '64')"
+          # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'wdr3320-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
+          echo "::set-env name=CPU_S::$(echo 'x86')"
+          # echo "::set-env name=CPU_S::$(echo 'arm')"
+          # echo "::set-env name=PATH_S::$(echo 'diy')"
+          echo "::set-env name=PATH_S::$(echo '1907')"
+          # echo "::set-env name=PATH_S::$(echo 'armt')"
+          echo "::set-env name=VPS_S::$(echo 'psw')"
+          # echo "::set-env name=VPS_S::$(echo 'ssr')"
+          # echo "::set-env name=VPS_S::$(echo 'ssr_new')"
+
       - name: Space cleanup
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -93,19 +107,24 @@ jobs:
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
           chmod -R 775 ./
 
+      - name: Set cpu
+        id: cpu
+        run: |
+          echo "::set-env name=cpu::$(echo 'cat ${{ env.PATH_S }}/${{ env.CPU_M }} >> openwrt/.config')"
+
       - name: Get current psw
         id: psw
         if: env.VPS_S == 'psw'
         run: |
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          echo "::set-env name=psw::$(echo 'cat vps/x86.psw >> openwrt/.config')"
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.psw >> openwrt/.config')"
 
       - name: Get current ssr
         id: ssr
         if: env.VPS_S == 'ssr'
         run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
-          echo "::set-env name=ssr::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
       - name: Get current ssr_new
         id: ssr_new
@@ -114,7 +133,7 @@ jobs:
           sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" 1907/lienol1907.sh
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" 1907/lienol1907.sh
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" 1907/lienol1907.sh
-          echo "::set-env name=ssr_new::$(echo 'cat vps/x86.ssr >> openwrt/.config')"
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
@@ -147,14 +166,13 @@ jobs:
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
-          cat 1907/x32 >> openwrt/.config
+          ${{ env.cpu }}
+          # cat 1907/x32 >> openwrt/.config
           cat 1907/drive >> openwrt/.config
           cat 1907/mini-lite >> openwrt/.config
           cat 1907/samba4 >> openwrt/.config
           # cat ${{ env.VPS_M }} >> openwrt/.config
-          ${{ env.psw }}
-          ${{ env.ssr }}
-          ${{ env.ssr_new }}
+          ${{ env.vps_m }}
           cd openwrt
           # ../$X86_DIY
           ./scripts/feeds install -a
@@ -202,7 +220,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_ipk
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
@@ -219,7 +237,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find openwrt/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined-squashfs*.*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "config.*" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.VPS_S }}.config
+          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -252,8 +270,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         with:
-          tag_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}
-          release_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}
+          tag_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
+          release_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
           body: |
               澧欏唴鍔犻€熶笅杞?
               
@@ -279,5 +297,5 @@ jobs:
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
           # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_firmware
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_firmware
           path: ${{ env.FIRMWARE }}
