@@ -34,11 +34,14 @@ env:
   # VPS_M: vps/x86.ssr
   # VPS_M: vps/x86.psw
   ### -+-+-
+  # DEFAULT: true
+  DEFAULT: false
+  ### -+-+-
+  SETUPS: true
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
   X86_DIY: diy/diy.sh
-  SETUPS: true
   FREE_UP_DISK: true
   SSH_ACTIONS: false
   UPLOAD_BIN_DIR: false
@@ -82,9 +85,17 @@ jobs:
           df -h
           chmod -R 775 ./
 
+      - name: Set date
+        id: date
+        run: |
+          echo "::set-env name=date::$(date +'%Y-%m-%d')"
+          echo "::set-env name=date1::$(date +'%y%m%d')"
+          echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
+          echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
+
       - name: Setup
         id: setup
-        if: env.SETUPS == 'true'
+        # if: env.SETUPS == 'true'
         run: |
           echo "::set-env name=CPU_S::$(echo 'x86')"
           # echo "::set-env name=CPU_S::$(echo 'arm')"
@@ -96,9 +107,12 @@ jobs:
           # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
           # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
           # --------
-          # echo "::set-env name=PATH_S::$(echo 'diy')"
-          echo "::set-env name=PATH_S::$(echo '1907')"
-          # echo "::set-env name=PATH_S::$(echo 'armt')"
+          # echo "::set-env name=PATH_CON_OTH::$(echo 'diy')"
+          echo "::set-env name=PATH_CON_OTH::$(echo '1907')"
+          # --------
+          # echo "::set-env name=PATH_CPU::$(echo 'diy')"
+          echo "::set-env name=PATH_CPU::$(echo '1907')"
+          # echo "::set-env name=PATH_CPU::$(echo 'armt')"
           # --------
           # echo "::set-env name=others::$(echo 'others')"
           echo "::set-env name=others::$(echo 'lienol1907')"
@@ -106,48 +120,44 @@ jobs:
           echo "::set-env name=VPS_S::$(echo 'psw')"
           # echo "::set-env name=VPS_S::$(echo 'ssr')"
           # echo "::set-env name=VPS_S::$(echo 'ssr_new')"
-
-      - name: Set date
-        id: date
-        run: |
-          echo "::set-env name=date::$(date +'%Y-%m-%d')"
-          echo "::set-env name=date1::$(date +'%y%m%d')"
-          echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
-          echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
+          # --------
+          # echo "::set-env name=PATH_S::$(echo 'diy')"
+          # echo "::set-env name=PATH_S::$(echo '1907')"
+          # echo "::set-env name=PATH_S::$(echo 'armt')"
 
       - name: Set cpu
         id: cpu
         run: |
-          echo "::set-env name=cpu::$(echo 'cat ${{ env.PATH_S }}/${{ env.CPU_M }} >> openwrt/.config')"
+          echo "::set-env name=cpu::$(echo 'cat ${{ env.PATH_CPU }}/${{ env.CPU_M }} >> openwrt/.config')"
 
       - name: Set psw
         id: psw
         if: env.VPS_S == 'psw'
         run: |
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_S }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.psw >> openwrt/.config')"
 
       - name: Set ssr
         id: ssrplus
         if: env.VPS_S == 'ssr'
         run: |
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_S }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
       - name: Set ssr_new
         id: ssrplus_new
         if: env.VPS_S == 'ssr_new'
         run: |
-          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_S }}/${{ env.others }}.sh
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_S }}/${{ env.others }}.sh
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_S }}/${{ env.others }}.sh
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr_new >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
-          ./1907/lienol1907.sh
+          ./${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
 
       - name: Free up disk space
@@ -170,17 +180,28 @@ jobs:
           ./scripts/feeds install -a
           df -h
 
-      - name: Load custom configuration
+      - name: Load default configuration
+        id: default
+        if: env.DEFAULT == 'true'
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
           ${{ env.cpu }}
-          # cat 1907/x64 >> openwrt/.config
-          cat 1907/drive >> openwrt/.config
-          cat 1907/mini-lite >> openwrt/.config
-          cat 1907/samba4 >> openwrt/.config
-          # cat ${{ env.VPS_M }} >> openwrt/.config
+          cd openwrt
+          # ../$X86_DIY
+          ./scripts/feeds install -a
+          make defconfig
+
+      - name: Load custom configuration
+        if: env.SETUPS == 'true' && env.DEFAULT == 'false'
+        run: |
+          rm -f openwrt/.config*
+          touch openwrt/.config
+          ${{ env.cpu }}
           ${{ env.vps_m }}
+          cat ${{ env.PATH_CON_OTH }}/drive >> openwrt/.config
+          cat ${{ env.PATH_CON_OTH }}/mini-lite >> openwrt/.config
+          cat ${{ env.PATH_CON_OTH }}/samba4 >> openwrt/.config
           cd openwrt
           # ../$X86_DIY
           ./scripts/feeds install -a

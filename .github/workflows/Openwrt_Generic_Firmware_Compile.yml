@@ -38,7 +38,6 @@ env:
   DEFAULT: false
   ### -+-+-
   SETUPS: true
-  # SETUPS: false
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
@@ -86,9 +85,17 @@ jobs:
           df -h
           chmod -R 775 ./
 
+      - name: Set date
+        id: date
+        run: |
+          echo "::set-env name=date::$(date +'%Y-%m-%d')"
+          echo "::set-env name=date1::$(date +'%y%m%d')"
+          echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
+          echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
+
       - name: Setup
         id: setup
-        if: env.SETUPS == 'true'
+        # if: env.SETUPS == 'true'
         run: |
           echo "::set-env name=CPU_S::$(echo 'x86')"
           # echo "::set-env name=CPU_S::$(echo 'arm')"
@@ -118,14 +125,6 @@ jobs:
           # echo "::set-env name=PATH_S::$(echo '1907')"
           # echo "::set-env name=PATH_S::$(echo 'armt')"
 
-      - name: Set date
-        id: date
-        run: |
-          echo "::set-env name=date::$(date +'%Y-%m-%d')"
-          echo "::set-env name=date1::$(date +'%y%m%d')"
-          echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
-          echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
-
       - name: Set cpu
         id: cpu
         run: |
@@ -133,21 +132,21 @@ jobs:
 
       - name: Set psw
         id: psw
-        if: env.VPS_S == 'psw' && env.DEFAULT == 'false'
+        if: env.VPS_S == 'psw'
         run: |
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.psw >> openwrt/.config')"
 
       - name: Set ssr
         id: ssrplus
-        if: env.VPS_S == 'ssr' && env.DEFAULT == 'false'
+        if: env.VPS_S == 'ssr'
         run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
       - name: Set ssr_new
         id: ssrplus_new
-        if: env.VPS_S == 'ssr_new' && env.DEFAULT == 'false'
+        if: env.VPS_S == 'ssr_new'
         run: |
           sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
@@ -158,6 +157,7 @@ jobs:
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
+          ./${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
 
       - name: Free up disk space
@@ -195,7 +195,6 @@ jobs:
       - name: Load custom configuration
         if: env.SETUPS == 'true' && env.DEFAULT == 'false'
         run: |
-          ./${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           rm -f openwrt/.config*
           touch openwrt/.config
           ${{ env.cpu }}
