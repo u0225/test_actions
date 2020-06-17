@@ -123,14 +123,14 @@ jobs:
         if: env.VPS_S == 'psw'
         run: |
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_S }}/${{ env.others }}.sh
-          echo "::set-env name=vps_m::$(echo 'cat ${{ env.PATH_S }}/${{ env.CPU_S }}.psw >> openwrt/.config')"
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.psw >> openwrt/.config')"
 
       - name: Set ssr
         id: ssrplus
         if: env.VPS_S == 'ssr'
         run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_S }}/${{ env.others }}.sh
-          echo "::set-env name=vps_m::$(echo 'cat ${{ env.PATH_S }}/${{ env.CPU_S }}.ssr >> openwrt/.config')"
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
       - name: Set ssr_new
         id: ssrplus_new
@@ -139,7 +139,7 @@ jobs:
           sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_S }}/${{ env.others }}.sh
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_S }}/${{ env.others }}.sh
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_S }}/${{ env.others }}.sh
-          echo "::set-env name=vps_m::$(echo 'cat ${{ env.PATH_S }}/${{ env.CPU_S }}.ssr >> openwrt/.config')"
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr_new >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
