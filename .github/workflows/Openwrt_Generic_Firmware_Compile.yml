@@ -326,6 +326,20 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Prepare config and download-url file
+        run: |
+          mkdir ./files
+          cp -r ./openwrt/.config ./files/${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_openwrt_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
+          echo "墙内加速下载_奶牛快传: ${{ env.COWURL }}" >> ./files/download.txt
+          echo "墙内加速下载_WeTransfer: ${{ env.WETRANS }}" >> ./files/download.txt
+
+      - name: Upload files artifact
+        uses: actions/upload-artifact@master
+        with:
+          # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_files
+          name: ${{ env.date }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_files
+          path: ./files
+
       - name: Upload firmware for release
         uses: csexton/release-asset-action@master
         continue-on-error: true
