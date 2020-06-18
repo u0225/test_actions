@@ -113,8 +113,8 @@ jobs:
           echo "::set-env name=CPU_S::$(echo 'x86')"
           # echo "::set-env name=CPU_S::$(echo 'arm')"
           # --------
-          # echo "::set-env name=CPU_M::$(echo '32')"
-          echo "::set-env name=CPU_M::$(echo '64')"
+          echo "::set-env name=CPU_M::$(echo '32')"
+          # echo "::set-env name=CPU_M::$(echo '64')"
           # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
           # echo "::set-env name=CPU_M::$(echo 'wdr3320-16m')"
           # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
