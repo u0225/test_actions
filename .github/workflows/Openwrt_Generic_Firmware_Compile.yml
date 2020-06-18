@@ -13,7 +13,7 @@
 #
 #==========================================================
 
-name: lienol-OpenWrt-19.07_x86_64_minilite_drive
+name: OpenWrt_x86_64_minilite_drive
 
 on:
   # release:
@@ -67,18 +67,18 @@ jobs:
         id: lean
         if: env.LEAN == 'true'
         run: |
-          echo "::set-env name=REPO_URL::$(echo 'REPO_URL: https://github.com/coolsnowwolf/lede')"
-          echo "::set-env name=REPO_BRANCH::$(echo 'REPO_BRANCH: master')"
-          echo "::set-env name=X86_DIY::$(echo 'X86_DIY: diy/diy.sh')"
-          echo "::set-env name=BRANCH_SET::$(echo 'BRANCH_SET: armt/master.sh')"
+          echo "::set-env name=REPO_URL::$(echo 'https://github.com/coolsnowwolf/lede')"
+          echo "::set-env name=REPO_BRANCH::$(echo 'master')"
+          echo "::set-env name=X86_DIY::$(echo 'diy/diy.sh')"
+          echo "::set-env name=BRANCH_SET::$(echo 'armt/master.sh')"
           echo "::set-env name=lean::$(echo 'lean')"
 
       - name: Lienol
         id: lienol
         if: env.LIENOL == 'true'
         run: |
-          echo "::set-env name=REPO_URL::$(echo 'REPO_URL: https://github.com/Lienol/openwrt')"
-          echo "::set-env name=REPO_BRANCH::$(echo 'REPO_BRANCH: dev-19.07')"
+          echo "::set-env name=REPO_URL::$(echo 'https://github.com/Lienol/openwrt')"
+          echo "::set-env name=REPO_BRANCH::$(echo 'dev-19.07')"
           echo "::set-env name=lienol::$(echo 'lienol')"
 
       - name: Space cleanup
