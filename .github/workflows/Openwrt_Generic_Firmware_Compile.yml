@@ -13,7 +13,7 @@
 #
 #==========================================================
 
-name: OpenWrt_x86_minilite_drive__firmware
+name: OpenWrt_x86_minilite_drive_firmware
 
 on:
   # release:
