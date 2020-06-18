@@ -29,10 +29,9 @@ env:
   LEAN: true
   # LIENOL: true
   ### -+-+-
-  DEFAULT_CON: false
-  # DEFAULT_CON: true
+  # DEFAULT_CONFIG: true
+  DIY_CONFIG: true
   ### -+-+-
-  SETUPS: true
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
@@ -108,7 +107,7 @@ jobs:
 
       - name: Setup
         id: setup
-        # if: env.SETUPS == 'true'
+        # if: env.DIY_CONFIG == 'true'
         run: |
           echo "::set-env name=CPU_S::$(echo 'x86')"
           # echo "::set-env name=CPU_S::$(echo 'arm')"
@@ -195,8 +194,8 @@ jobs:
           df -h
 
       - name: Load default configuration
-        id: default_con
-        if: env.DEFAULT_CON == 'true'
+        id: default_config
+        if: env.DEFAULT_CONFIG == 'true'
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
@@ -208,7 +207,7 @@ jobs:
           make defconfig
 
       - name: Load custom configuration
-        if: env.SETUPS == 'true' && env.DEFAULT_CON == 'false'
+        if: env.DIY_CONFIG == 'true'
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
