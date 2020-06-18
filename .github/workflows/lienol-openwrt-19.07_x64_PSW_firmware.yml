@@ -297,18 +297,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         with:
-          tag_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
-          release_name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
+          tag_name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
+          release_name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
           body: |
-              澧欏唴鍔犻€熶笅杞?
+              墙内加速下载:
               
-              濂剁墰蹇紶: ${{ env.COWURL }}
+              奶牛快传: ${{ env.COWURL }}
               
               WeTransfer: ${{ env.WETRANS }}
               
-              璇峰垎閰嶄笉浣庝簬1G 鐨勫唴瀛樺拰瀛樺偍绌洪棿
+              请分配不低于800M 的存储空间
           draft: false
-          prerelease: false     
+          prerelease: false
 
       - name: Upload firmware for release
         uses: csexton/release-asset-action@master
