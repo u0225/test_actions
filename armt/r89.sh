@@ -5,7 +5,7 @@
 
 # =========================================================================================
 # 这项是为r8-9(r8.1.12 r9.8.17 r9.10.10)或者是20200416(master)之前源码使用的，之后的不能用 #
-sed -i s"/openwrt-19.07/openwrt-18.06/g" lede/feeds.conf.default
+sed -i s"/openwrt-19.07/openwrt-18.06/g" openwrt/feeds.conf.default
 #                                                                                          #
 
 cd armt

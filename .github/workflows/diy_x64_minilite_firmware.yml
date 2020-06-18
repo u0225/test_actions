@@ -24,7 +24,7 @@ on:
     - cron: 00 10 * * 6
 
 env:
-  TARGET: Openwrt_x86_64_minilite_drive
+  TARGET: Openwrt_minilite_drive
   REPO_URL: https://github.com/coolsnowwolf/lede
   # REPO_URL: https://github.com/u0225/lede
   ### -+-+-
@@ -40,15 +40,10 @@ env:
   # BRANCH_SET: armt/r89.sh
   # BRANCH_SET: armt/r20.sh
   ### -+-+-
-  # VPS_S: SSRPlus
-  # VPS_S: SSRPlus_new
-  VPS_S: PSW
+  DEFAULT_CON: false
+  # DEFAULT_CON: true
   ### -+-+-
-  # VPS_M: vps/arm.ssr
-  # VPS_M: vps/arm.psw
-  # VPS_M: vps/x86.ssr
-  # VPS_M: vps/x86.psw
-  ### -+-+-
+  SETUPS: true
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
@@ -97,35 +92,72 @@ jobs:
           echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
 
+      - name: Setup
+        id: setup
+        # if: env.SETUPS == 'true'
+        run: |
+          echo "::set-env name=CPU_S::$(echo 'x86')"
+          # echo "::set-env name=CPU_S::$(echo 'arm')"
+          # --------
+          # echo "::set-env name=CPU_M::$(echo '32')"
+          echo "::set-env name=CPU_M::$(echo '64')"
+          # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'wdr3320-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
+          # --------
+          echo "::set-env name=PATH_CON_OTH::$(echo 'diy')"
+          # echo "::set-env name=PATH_CON_OTH::$(echo '1907')"
+          # --------
+          echo "::set-env name=PATH_CPU::$(echo 'diy')"
+          # echo "::set-env name=PATH_CPU::$(echo '1907')"
+          # echo "::set-env name=PATH_CPU::$(echo 'armt')"
+          # --------
+          echo "::set-env name=others::$(echo 'others')"
+          # echo "::set-env name=others::$(echo 'others_1907')"
+          # --------
+          echo "::set-env name=VPS_S::$(echo 'psw')"
+          # echo "::set-env name=VPS_S::$(echo 'ssr')"
+          # echo "::set-env name=VPS_S::$(echo 'ssr_new')"
+          # --------
+          # echo "::set-env name=PATH_S::$(echo 'diy')"
+          # echo "::set-env name=PATH_S::$(echo '1907')"
+          # echo "::set-env name=PATH_S::$(echo 'armt')"
+
+      - name: Set cpu
+        id: cpu
+        run: |
+          echo "::set-env name=cpu::$(echo 'cat ${{ env.PATH_CPU }}/${{ env.CPU_M }} >> openwrt/.config')"
+
       - name: Get current psw
         id: psw
-        if: env.VPS_S == 'PSW'
+        if: env.VPS_S == 'psw'
         run: |
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" diy/others.sh
-          echo "::set-env name=psw::$(echo 'cat vps/x86.psw >> lede/.config')"
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.psw >> openwrt/.config')"
 
-      - name: Get current ssrplus
-        id: ssrplus
-        if: env.VPS_S == 'SSRPlus'
+      - name: Get current ssr
+        id: ssr
+        if: env.VPS_S == 'ssr'
         run: |
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" diy/others.sh
-          echo "::set-env name=ssrplus::$(echo 'cat vps/x86.ssr >> lede/.config')"
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
-      - name: Get current ssrplus_new
-        id: ssrplus_new
-        if: env.VPS_S == 'SSRPlus_new'
+      - name: Get current ssr_new
+        id: ssr_new
+        if: env.VPS_S == 'ssr_new'
         run: |
-          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" diy/others.sh
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" diy/others.sh
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" diy/others.sh
-          echo "::set-env name=ssrplus_new::$(echo 'cat vps/x86.ssr >> lede/.config')"
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr_new >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
-          git clone --depth 1 $REPO_URL -b $REPO_BRANCH lede
+          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
-          # cp ./${{ env.FEEDS_FILE }} lede/feeds.conf.default
-          ./diy/others.sh
+          # mv -f ./${{ env.FEEDS_FILE }} openwrt/feeds.conf.default
+          ./${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           ./$BRANCH_SET
 
       - name: Free up disk space
@@ -133,45 +165,56 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          sudo mkdir -p -m 777 lede/build_dir /mnt/lede/dl /mnt/lede/staging_dir /mnt/lede/build_dir/hostpkg /mnt/lede/build_dir/host
-          ln -s /mnt/lede/build_dir/hostpkg lede/build_dir/hostpkg
-          ln -s /mnt/lede/build_dir/host lede/build_dir/host
-          ln -s /mnt/lede/dl lede/dl
-          ln -s /mnt/lede/staging_dir lede/staging_dir
+          sudo mkdir -p -m 777 openwrt/build_dir /mnt/openwrt/dl /mnt/openwrt/staging_dir /mnt/openwrt/build_dir/hostpkg /mnt/openwrt/build_dir/host
+          ln -s /mnt/openwrt/build_dir/hostpkg openwrt/build_dir/hostpkg
+          ln -s /mnt/openwrt/build_dir/host openwrt/build_dir/host
+          ln -s /mnt/openwrt/dl openwrt/dl
+          ln -s /mnt/openwrt/staging_dir openwrt/staging_dir
           df -h
 
       - name: Git pull Update feeds and install
         run: |
-          cd lede
+          cd openwrt
           git pull
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           df -h
 
-      - name: Load custom configuration
+      - name: Load default configuration
+        id: default_con
+        if: env.DEFAULT_CON == 'true'
         run: |
-          rm -f lede/.config*
-          touch lede/.config
-          cat diy/x64 >> lede/.config
-          # cat diy/Setting >> lede/.config
-          cat diy/drive >> lede/.config
-          # cat diy/luci-app >> lede/.config
-          cat diy/mini-lite >> lede/.config
-          cat diy/samba4 >> lede/.config
-          # cat diy/samba36 >> lede/.config
-          # cat diy/mwan3 >> lede/.config
-          # cat ${{ env.VPS_M }} >> lede/.config
-          ${{ env.psw }}
-          ${{ env.ssrplus }}
-          ${{ env.ssrplus_new }}
-          cd lede
+          rm -f openwrt/.config*
+          touch openwrt/.config
+          ${{ env.cpu }}
+          ${{ env.vps_m }}
+          cd openwrt
+          ../$X86_DIY
+          ./scripts/feeds install -a
+          make defconfig
+
+      - name: Load custom configuration
+        if: env.SETUPS == 'true' && env.DEFAULT_CON == 'false'
+        run: |
+          rm -f openwrt/.config*
+          touch openwrt/.config
+          ${{ env.cpu }}
+          ${{ env.vps_m }}
+          # cat ${{ env.PATH_CON_OTH }}/Setting >> openwrt/.config
+          cat ${{ env.PATH_CON_OTH }}/drive >> openwrt/.config
+          # cat ${{ env.PATH_CON_OTH }}/luci-app >> openwrt/.config
+          cat ${{ env.PATH_CON_OTH }}/mini-lite >> openwrt/.config
+          cat ${{ env.PATH_CON_OTH }}/samba4 >> openwrt/.config
+          # cat ${{ env.PATH_CON_OTH }}/samba36 >> openwrt/.config
+          # cat ${{ env.PATH_CON_OTH }}/mwan3 >> openwrt/.config
+          cd openwrt
           ../$X86_DIY
           ./scripts/feeds install -a
           make defconfig
 
       - name: Make download
         run: |
-          cd lede
+          cd openwrt
           make download -j8
           find dl -size -1024c -exec ls -l {} \;
           find dl -size -1024c -exec rm -f {} \;
@@ -179,7 +222,7 @@ jobs:
 
       - name: Compile firmware
         run: |
-          cd lede
+          cd openwrt
           echo -e "$(($(nproc)+1)) thread compile"
           make -j$(($(nproc)+1)) || make -j1 V=s
           # make -j$(nproc) || make -j1 V=s
@@ -198,32 +241,32 @@ jobs:
       #   if: always()
       #   with:
       #     name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_bin_all
-      #     path: lede/bin
+      #     path: openwrt/bin
 
       - name: Prepare ipk packages artifact
-        run: mkdir ./ipk && mkdir ./ipk/targets && cp -r ./lede/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./lede/bin/packages ./ipk
+        run: mkdir ./ipk && mkdir ./ipk/targets && cp -r ./openwrt/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./openwrt/bin/packages ./ipk
 
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_ipk
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
-      #   run: find lede/bin/targets/ -type d -name "packages" | xargs rm -rf {}
+      #   run: find openwrt/bin/targets/ -type d -name "packages" | xargs rm -rf {}
 
       # - name: Upload artifact
       #   uses: actions/upload-artifact@master
       #   with:
       #     name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware_all
-      #     path: lede/bin/targets/
+      #     path: openwrt/bin/targets/
 
       - name: Organize files
         id: organize
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
-          mkdir firmware && find lede/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp lede/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.VPS_S }}.config
+          mkdir firmware && find openwrt/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
+          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -232,5 +275,5 @@ jobs:
         uses: actions/upload-artifact@master
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.VPS_S }}_firmware
+          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_firmware
           path: ${{ env.FIRMWARE }}

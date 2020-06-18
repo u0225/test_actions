@@ -31,11 +31,8 @@ env:
   REPO_BRANCH: dev-19.07
   # REPO_BRANCH: master
   ### -+-+-
-  # VPS_M: vps/x86.ssr
-  # VPS_M: vps/x86.psw
-  ### -+-+-
-  # DEFAULT: true
-  DEFAULT: false
+  DEFAULT_CON: false
+  # DEFAULT_CON: true
   ### -+-+-
   SETUPS: true
   CONFIG_FILE: config/.config
@@ -115,7 +112,7 @@ jobs:
           # echo "::set-env name=PATH_CPU::$(echo 'armt')"
           # --------
           # echo "::set-env name=others::$(echo 'others')"
-          echo "::set-env name=others::$(echo 'lienol1907')"
+          echo "::set-env name=others::$(echo 'others_1907')"
           # --------
           echo "::set-env name=VPS_S::$(echo 'psw')"
           # echo "::set-env name=VPS_S::$(echo 'ssr')"
@@ -138,14 +135,14 @@ jobs:
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.psw >> openwrt/.config')"
 
       - name: Set ssr
-        id: ssrplus
+        id: ssr
         if: env.VPS_S == 'ssr'
         run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.ssr >> openwrt/.config')"
 
       - name: Set ssr_new
-        id: ssrplus_new
+        id: ssr_new
         if: env.VPS_S == 'ssr_new'
         run: |
           sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
@@ -181,19 +178,20 @@ jobs:
           df -h
 
       - name: Load default configuration
-        id: default
-        if: env.DEFAULT == 'true'
+        id: default_con
+        if: env.DEFAULT_CON == 'true'
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
           ${{ env.cpu }}
+          ${{ env.vps_m }}
           cd openwrt
           # ../$X86_DIY
           ./scripts/feeds install -a
           make defconfig
 
       - name: Load custom configuration
-        if: env.SETUPS == 'true' && env.DEFAULT == 'false'
+        if: env.SETUPS == 'true' && env.DEFAULT_CON == 'false'
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
