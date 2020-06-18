@@ -57,7 +57,6 @@ cp -rf package-others/openwrt-diy openwrt/package/diy && cp -rf package-others/o
 cd openwrt/package/others
 # git clone https://github.com/vernesong/OpenClash.git
 # git clone https://github.com/garypang13/luci-app-eqos.git
-# git clone https://github.com/fw876/helloworld.git
 # git clone https://github.com/Lienol/openwrt-package.git
 # git clone https://github.com/u0225/Lienol-openwrt-package.git
 # git clone https://github.com/u0225/psw_single.git
