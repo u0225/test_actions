@@ -25,16 +25,17 @@ on:
 
 env:
   TARGET: Openwrt_minilite_drive
-  # --------------------- 选哪位大佬的源码
+  # ---
   LEAN: true
   # LIENOL: true
-  # --------------------- 选择编译默认还是DIY配置
+  # ------------------- #
   # DEFAULT_CONFIG: true
   DIY_CONFIG: true
-  # ---
+  # ------------------- #
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
+  TZ: Asia/Shanghai
 
 jobs:
   build_openwrt:
@@ -53,17 +54,17 @@ jobs:
         id: env
         # if: env.DIY_CONFIG == 'true'
         run: |
-          # ----------------------------------------- 选择编译x86还是arm架构
+          # ----------------------------------------- #
           echo "::set-env name=CPU_S::$(echo 'x86')"
           # echo "::set-env name=CPU_S::$(echo 'arm')"
-          # ----------------------------------------  选择编译32位64位还是arm的以下固件
+          # ----------------------------------------- #
           echo "::set-env name=CPU_M::$(echo '32')"
           # echo "::set-env name=CPU_M::$(echo '64')"
           # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
           # echo "::set-env name=CPU_M::$(echo 'wdr3320-16m')"
           # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
           # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
-          # --------
+          # --------------------------------------------------- #
           echo "::set-env name=PATH_CON_OTH::$(echo 'diy')"
           # echo "::set-env name=PATH_CON_OTH::$(echo '1907')"
           # --------
@@ -73,15 +74,15 @@ jobs:
           # --------
           echo "::set-env name=others::$(echo 'others')"
           # echo "::set-env name=others::$(echo 'others_1907')"
-          # --------------------  vps  ------------------ #
+          # -------------------------------------------------- #
           # echo "::set-env name=VPS_S::$(echo 'psw')"
           # echo "::set-env name=VPS_S::$(echo 'ssr')"
           echo "::set-env name=VPS_S::$(echo 'ssr_new')"
-          # --------------------------------------------- #
+          # ------------------------------------------- #
           # echo "::set-env name=PATH_S::$(echo 'diy')"
           # echo "::set-env name=PATH_S::$(echo '1907')"
           # echo "::set-env name=PATH_S::$(echo 'armt')"
-          # ===============  以下不要修改  ================= #
+          # ================================================ #
           echo "::set-env name=FREE_UP_DISK::$(echo 'true')"
           echo "::set-env name=SSH_ACTIONS::$(echo 'false')"
           echo "::set-env name=UPLOAD_BIN_DIR::$(echo 'false')"
@@ -93,8 +94,7 @@ jobs:
           echo "::set-env name=UPLOAD_FIRMWARE_FOR_RELEASE::$(echo 'true')"
           echo "::set-env name=UPLOAD_FIRMWARE_TO_COWTRANSFER::$(echo 'true')"
           echo "::set-env name=UPLOAD_FIRMWARE_TO_WETRANSFER::$(echo 'true')"
-          echo "::set-env name=TZ::$(echo 'Asia/Shanghai')"
-          # ================================================================== #
+          # ================================================================= #
 
       - name: Lean
         id: lean
