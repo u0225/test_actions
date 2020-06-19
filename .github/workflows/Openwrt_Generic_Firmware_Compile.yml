@@ -328,19 +328,20 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Prepare config and download-url file
+      - name: Prepare config and download_link
         run: |
-          mkdir ./files
+          mkdir ./download_link
           cp -r ./openwrt/.config ./files/${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_openwrt_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
-          echo "墙内加速下载_奶牛快传: ${{ env.COWURL }}" >> ./files/download.txt
-          echo "墙内加速下载_WeTransfer: ${{ env.WETRANS }}" >> ./files/download.txt
+          echo "有效时间6天" >> ./download_link/download_link.txt
+          echo "墙内加速下载_奶牛快传: ${{ env.COWURL }}" >> ./download_link/download_link.txt
+          echo "墙内加速下载_WeTransfer: ${{ env.WETRANS }}" >> ./download_link/download_link.txt
 
-      - name: Upload files artifact
+      - name: Upload download_link artifact
         uses: actions/upload-artifact@master
         with:
-          # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_files
-          name: ${{ env.date }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_files
-          path: ./files
+          # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_download_link
+          name: ${{ env.date }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_download_link
+          path: ./download_link
 
       - name: Upload firmware for release
         uses: csexton/release-asset-action@master
