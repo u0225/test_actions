@@ -13,51 +13,28 @@
 #
 #==========================================================
 
-name: OpenWrt_x86_64_Generic_minilite_drive
+name: OpenWrt_x86_minilite_drive_firmware
 
 on:
   # release:
   #   types: [published]
-  # watch:
-  #   types: [started]
+  watch:
+    types: [started]
   schedule:
     - cron: 00 10 * * 6
 
 env:
   TARGET: Openwrt_minilite_drive
-  REPO_URL: https://github.com/coolsnowwolf/lede
-  # REPO_URL: https://github.com/u0225/lede
-  ### -+-+-
-  REPO_BRANCH: master
-  # REPO_BRANCH: r8.1.12
-  # REPO_BRANCH: r9.8.17
-  # REPO_BRANCH: r9.10.10
-  # REPO_BRANCH: 20200408
-  # REPO_BRANCH: 20200416
-  # REPO_BRANCH: r20.5.20
-  ### -+-+-
-  BRANCH_SET: armt/master.sh
-  # BRANCH_SET: armt/r89.sh
-  # BRANCH_SET: armt/r20.sh
-  ### -+-+-
+  # ------------------- #
+  LEAN: true
+  # LIENOL: true
+  # ------------------- #
   # DEFAULT_CONFIG: true
   DIY_CONFIG: true
-  ### -+-+-
+  # ------------------- #
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
   ARM_SET: armt/armt-set.sh
-  X86_DIY: diy/diy.sh
-  FREE_UP_DISK: true
-  SSH_ACTIONS: false
-  UPLOAD_BIN_DIR: false
-  UPLOAD_FIRMWARE: true
-  UPLOAD_COWTRANSFER: false
-  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
-  UPLOAD_BIN_DIR_FOR_ARTIFACT: false
-  UPLOAD_FIRMWARE_FOR_ARTIFACT: true
-  UPLOAD_FIRMWARE_FOR_RELEASE: true
-  UPLOAD_FIRMWARE_TO_COWTRANSFER: true
-  UPLOAD_FIRMWARE_TO_WETRANSFER: true
   TZ: Asia/Shanghai
 
 jobs:
@@ -73,6 +50,71 @@ jobs:
         with:
           ref: master
 
+      - name: Set env
+        id: env
+        # if: env.DIY_CONFIG == 'true'
+        run: |
+          # ========================================= #
+          echo "::set-env name=CPU_S::$(echo 'x86')"
+          # echo "::set-env name=CPU_S::$(echo 'arm')"
+          # ----------------------------------------- #
+          echo "::set-env name=CPU_M::$(echo '32')"
+          # echo "::set-env name=CPU_M::$(echo '64')"
+          # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'wdr3320-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
+          # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
+          # --------------------------------------------------- #
+          echo "::set-env name=PATH_CONF_OTH::$(echo 'diy')"
+          # echo "::set-env name=PATH_CONF_OTH::$(echo '1907')"
+          # --------
+          echo "::set-env name=PATH_CPU::$(echo 'diy')"
+          # echo "::set-env name=PATH_CPU::$(echo '1907')"
+          # echo "::set-env name=PATH_CPU::$(echo 'armt')"
+          # --------
+          echo "::set-env name=others::$(echo 'others')"
+          # echo "::set-env name=others::$(echo 'others_1907')"
+          # -------------------------------------------------- #
+          # echo "::set-env name=VPS_S::$(echo 'psw')"
+          # echo "::set-env name=VPS_S::$(echo 'ssr')"
+          echo "::set-env name=VPS_S::$(echo 'ssr_new')"
+          # ------------------------------------------- #
+          # echo "::set-env name=PATH_S::$(echo 'diy')"
+          # echo "::set-env name=PATH_S::$(echo '1907')"
+          # echo "::set-env name=PATH_S::$(echo 'armt')"
+          # ================================================ #
+          echo "::set-env name=FREE_UP_DISK::$(echo 'true')"
+          echo "::set-env name=SSH_ACTIONS::$(echo 'false')"
+          echo "::set-env name=UPLOAD_BIN_DIR::$(echo 'false')"
+          echo "::set-env name=UPLOAD_FIRMWARE::$(echo 'true')"
+          echo "::set-env name=UPLOAD_COWTRANSFER::$(echo 'false')"
+          echo "::set-env name=REPO_TOKEN::$(echo '${{ secrets.REPO_TOKEN }}')"
+          echo "::set-env name=UPLOAD_BIN_DIR_FOR_ARTIFACT::$(echo 'false')"
+          echo "::set-env name=UPLOAD_FIRMWARE_FOR_ARTIFACT::$(echo 'true')"
+          echo "::set-env name=UPLOAD_FIRMWARE_FOR_RELEASE::$(echo 'true')"
+          echo "::set-env name=UPLOAD_FIRMWARE_TO_COWTRANSFER::$(echo 'true')"
+          echo "::set-env name=UPLOAD_FIRMWARE_TO_WETRANSFER::$(echo 'true')"
+          # ================================================================= #
+
+      - name: Lean
+        id: lean
+        if: env.LEAN == 'true'
+        run: |
+          echo "::set-env name=REPO_URL::$(echo 'https://github.com/coolsnowwolf/lede')"
+          echo "::set-env name=REPO_BRANCH::$(echo 'master')"
+          echo "::set-env name=X86_DIY::$(echo 'diy/diy.sh')"
+          echo "::set-env name=BRANCH_SET::$(echo 'armt/master.sh')"
+          echo "::set-env name=lean::$(echo 'lean')"
+
+      - name: Lienol
+        id: lienol
+        if: env.LIENOL == 'true'
+        run: |
+          echo "::set-env name=REPO_URL::$(echo 'https://github.com/Lienol/openwrt')"
+          echo "::set-env name=REPO_BRANCH::$(echo 'dev-19.07')"
+          echo "::set-env name=feeds_conf::$(echo 'sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default')"
+          echo "::set-env name=lienol::$(echo 'lienol')"
+
       - name: Space cleanup
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -85,11 +127,12 @@ jobs:
           # sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
-          curl -fsSL https://raw.githubusercontent.com/u0225/openwrt_lede_actions/master/.bashrc >> ~/.bashrc
+          # curl -fsSL https://raw.githubusercontent.com/u0225/openwrt_lede_actions/master/.bashrc >> ~/.bashrc
           sudo ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
           df -h
+          chmod -R 775 ./
 
-      - name: Get current date
+      - name: Set date
         id: date
         run: |
           echo "::set-env name=date::$(date +'%Y-%m-%d')"
@@ -97,72 +140,41 @@ jobs:
           echo "::set-env name=date2::$(date +'%Y-%m-%d_%H.%M')"
           echo "::set-env name=date3::$(date +'%Y-%m-%d_%H.%M.%S')"
 
-      - name: Setup
-        id: setup
-        # if: env.DIY_CONFIG == 'true'
-        run: |
-          echo "::set-env name=CPU_S::$(echo 'x86')"
-          # echo "::set-env name=CPU_S::$(echo 'arm')"
-          # --------
-          # echo "::set-env name=CPU_M::$(echo '32')"
-          echo "::set-env name=CPU_M::$(echo '64')"
-          # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
-          # echo "::set-env name=CPU_M::$(echo 'wdr3320-16m')"
-          # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
-          # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
-          # --------
-          echo "::set-env name=PATH_CON_OTH::$(echo 'diy')"
-          # echo "::set-env name=PATH_CON_OTH::$(echo '1907')"
-          # --------
-          echo "::set-env name=PATH_CPU::$(echo 'diy')"
-          # echo "::set-env name=PATH_CPU::$(echo '1907')"
-          # echo "::set-env name=PATH_CPU::$(echo 'armt')"
-          # --------
-          echo "::set-env name=others::$(echo 'others')"
-          # echo "::set-env name=others::$(echo 'others_1907')"
-          # --------
-          echo "::set-env name=VPS_S::$(echo 'psw')"
-          # echo "::set-env name=VPS_S::$(echo 'ssr')"
-          # echo "::set-env name=VPS_S::$(echo 'ssr_new')"
-          # --------
-          # echo "::set-env name=PATH_S::$(echo 'diy')"
-          # echo "::set-env name=PATH_S::$(echo '1907')"
-          # echo "::set-env name=PATH_S::$(echo 'armt')"
-
       - name: Set cpu
         id: cpu
         run: |
           echo "::set-env name=cpu::$(echo 'cat ${{ env.PATH_CPU }}/${{ env.CPU_M }} >> openwrt/.config')"
 
-      - name: Get current psw
+      - name: Set psw
         id: psw
         if: env.VPS_S == 'psw'
         run: |
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
 
-      - name: Get current ssr
+      - name: Set ssr
         id: ssr
         if: env.VPS_S == 'ssr'
         run: |
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
 
-      - name: Get current ssr_new
+      - name: Set ssr_new
         id: ssr_new
         if: env.VPS_S == 'ssr_new'
         run: |
-          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
-          # mv -f ./${{ env.FEEDS_FILE }} openwrt/feeds.conf.default
-          ./${{ env.PATH_CON_OTH }}/${{ env.others }}.sh
+          ./${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
+          ${{ env.feeds_conf }}
+          # sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
           ./$BRANCH_SET
 
       - name: Free up disk space
@@ -205,17 +217,17 @@ jobs:
           touch openwrt/.config
           ${{ env.cpu }}
           ${{ env.vps_m }}
-          # cat ${{ env.PATH_CON_OTH }}/Setting >> openwrt/.config
-          cat ${{ env.PATH_CON_OTH }}/drive >> openwrt/.config
-          # cat ${{ env.PATH_CON_OTH }}/luci-app >> openwrt/.config
-          cat ${{ env.PATH_CON_OTH }}/mini-lite >> openwrt/.config
-          cat ${{ env.PATH_CON_OTH }}/samba4 >> openwrt/.config
-          # cat ${{ env.PATH_CON_OTH }}/samba36 >> openwrt/.config
-          # cat ${{ env.PATH_CON_OTH }}/mwan3 >> openwrt/.config
+          cat ${{ env.PATH_CONF_OTH }}/drive >> openwrt/.config
+          cat ${{ env.PATH_CONF_OTH }}/mini-lite >> openwrt/.config
+          cat ${{ env.PATH_CONF_OTH }}/samba4 >> openwrt/.config
           cd openwrt
           ../$X86_DIY
           ./scripts/feeds install -a
           make defconfig
+
+      - name: SSH connection to Actions
+        uses: garypang13/debugger-action@master
+        if: env.SSH_ACTIONS == 'true'
 
       - name: Make download
         run: |
@@ -255,7 +267,7 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_ipk
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_ipk
+          name: ${{ env.date }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_ipk
           path: ./ipk
 
       # - name: Prepare artifact
@@ -272,7 +284,7 @@ jobs:
         if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
         run: |
           mkdir firmware && find openwrt/bin/targets/*/*/* -maxdepth 0 -name "*uefi-gpt*" -or -name "*combined-squashfs*.*" -or -name "*.vmdk" -or -name "*vmlinuz" -or -name "config.*" -or -name "*.seed" -or -name "*.manifest" -or -name "sha256sums" | xargs -i mv -f {} ./firmware/
-          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
+          cp openwrt/.config ./firmware/${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
           cd firmware
           echo "::set-env name=FIRMWARE::$PWD"
           echo "::set-output name=status::success"
@@ -305,18 +317,33 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
         with:
-          tag_name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
-          release_name: ${{ env.date1 }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
+          tag_name: ${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
+          release_name: ${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}
           body: |
-              墙内加速下载:
+              墙内加速下载(有效保存时间7天):
               
               奶牛快传: ${{ env.COWURL }}
               
               WeTransfer: ${{ env.WETRANS }}
               
-              请分配不低于800M 的存储空间
+              请分配不低于800M的存储空间
           draft: false
           prerelease: false
+
+      - name: Prepare config and download_link
+        run: |
+          mkdir ./download_link
+          cp -r ./openwrt/.config ./files/${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_openwrt_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
+          echo "有效保存时间7天" >> ./download_link/download_link.txt
+          echo "墙内加速下载_奶牛快传: ${{ env.COWURL }}" >> ./download_link/download_link.txt
+          echo "墙内加速下载_WeTransfer: ${{ env.WETRANS }}" >> ./download_link/download_link.txt
+
+      - name: Upload download_link artifact
+        uses: actions/upload-artifact@master
+        with:
+          # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_download_link
+          name: ${{ env.date }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_download_link
+          path: ./download_link
 
       - name: Upload firmware for release
         uses: csexton/release-asset-action@master
@@ -331,5 +358,6 @@ jobs:
         uses: actions/upload-artifact@master
         if: steps.organize.outputs.status == 'success' && !cancelled()
         with:
-          name: ${{ env.date }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_firmware
+          # name: ${{ env.date }}_${{ env.TARGET }}_${{ env.REPO_BRANCH }}_${{ env.VPS_S }}_firmware
+          name: ${{ env.date }}_${{ env.lean }}${{ env.lienol }}_${{ env.TARGET }}_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}_firmware
           path: ${{ env.FIRMWARE }}
