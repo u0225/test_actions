@@ -333,7 +333,7 @@ jobs:
       - name: Prepare config and download_link
         run: |
           mkdir ./download_link
-          cp -r ./openwrt/.config ./files/${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_openwrt_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
+          cp -r ./openwrt/.config ./download_link/${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_openwrt_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
           echo "有效保存时间7天" >> ./download_link/download_link.txt
           echo "墙内加速下载_奶牛快传: ${{ env.COWURL }}" >> ./download_link/download_link.txt
           echo "墙内加速下载_WeTransfer: ${{ env.WETRANS }}" >> ./download_link/download_link.txt
