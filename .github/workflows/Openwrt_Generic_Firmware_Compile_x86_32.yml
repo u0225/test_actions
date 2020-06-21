@@ -195,7 +195,7 @@ jobs:
           ./${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
           ${{ env.feeds_conf }}
           # sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
-          ./$BRANCH_SET
+          ${{ env.BRANCH_SET }}
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -226,8 +226,8 @@ jobs:
           ${{ env.cpu }}
           ${{ env.vps_m }}
           cd openwrt
-          ../$X86_DIY
-          ../$ARM_SET
+          ${{ env.X86_DIY }}
+          ${{ env.ARM_SET }}
           ./scripts/feeds install -a
           make defconfig
 
@@ -243,7 +243,7 @@ jobs:
           cat ${{ env.PATH_CONF_OTH }}/mini-lite >> openwrt/.config
           cat ${{ env.PATH_CONF_OTH }}/samba4 >> openwrt/.config
           cd openwrt
-          ../$X86_DIY
+          ${{ env.X86_DIY }}
           ./scripts/feeds install -a
           make defconfig
 
@@ -257,7 +257,7 @@ jobs:
           ${{ env.vps_m }}
           cat armt/armt-luci-app-16m >> openwrt/.config
           cd openwrt
-          ../$ARM_SET
+          ${{ env.ARM_SET }}
           ./scripts/feeds install -a
           make defconfig
 
