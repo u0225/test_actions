@@ -128,9 +128,9 @@ jobs:
           # echo "::set-env name=REPO_BRANCH::$(echo '20200416')"
           # echo "::set-env name=REPO_BRANCH::$(echo 'r20.5.20')"
           # --------------------------------------------------------- #
-          # echo "::set-env name=BRANCH_SET::$(echo 'armt/master.sh')"
-          echo "::set-env name=BRANCH_SET::$(echo 'armt/r89.sh')"
-          # echo "::set-env name=BRANCH_SET::$(echo 'armt/r20.sh')"
+          # echo "::set-env name=BRANCH_SET::$(echo './armt/master.sh')"
+          echo "::set-env name=BRANCH_SET::$(echo './armt/r89.sh')"
+          # echo "::set-env name=BRANCH_SET::$(echo './armt/r20.sh')"
           # ------------------------------------------------------ #
           echo "::set-env name=ARM_SET::$(echo '../armt/armt-set.sh')"
           echo "::set-env name=lean::$(echo 'lean')"
