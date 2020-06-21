@@ -26,8 +26,8 @@ on:
 env:
   TARGET: Openwrt_minilite_drive
   # ------------------- #
-  # LEAN: true
-  LIENOL: true
+  LEAN: true
+  # LIENOL: true
   # ARM: true
   # ------------------- #
   # DEFAULT_CONFIG: true
@@ -58,8 +58,8 @@ jobs:
           echo "::set-env name=CPU_S::$(echo 'x86')"
           # echo "::set-env name=CPU_S::$(echo 'arm')"
           # ----------------------------------------- #
-          # echo "::set-env name=PATH_CPU::$(echo 'diy')"
-          echo "::set-env name=PATH_CPU::$(echo '1907')"
+          echo "::set-env name=PATH_CPU::$(echo 'diy')"
+          # echo "::set-env name=PATH_CPU::$(echo '1907')"
           # echo "::set-env name=PATH_CPU::$(echo 'armt')"
           # --------------------------------------------- #
           # echo "::set-env name=CPU_M::$(echo '32')"
@@ -69,15 +69,15 @@ jobs:
           # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
           # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
           # --------------------------------------------------- #
-          # echo "::set-env name=PATH_OTH::$(echo 'diy')"
-          echo "::set-env name=PATH_OTH::$(echo '1907')"
+          echo "::set-env name=PATH_OTH::$(echo 'diy')"
+          # echo "::set-env name=PATH_OTH::$(echo '1907')"
           # --------
-          # echo "::set-env name=others::$(echo 'others')"
-          echo "::set-env name=others::$(echo 'others_1907')"
+          echo "::set-env name=others::$(echo 'others')"
+          # echo "::set-env name=others::$(echo 'others_1907')"
           # -------------------------------------------------- #
-          echo "::set-env name=VPS_S::$(echo 'psw')"
+          # echo "::set-env name=VPS_S::$(echo 'psw')"
           # echo "::set-env name=VPS_S::$(echo 'ssr')"
-          # echo "::set-env name=VPS_S::$(echo 'ssr_new')"
+          echo "::set-env name=VPS_S::$(echo 'ssr_new')"
           # ------------------------------------------- #
           # echo "::set-env name=PATH_S::$(echo 'diy')"
           # echo "::set-env name=PATH_S::$(echo '1907')"

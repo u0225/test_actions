@@ -26,12 +26,12 @@ on:
 env:
   TARGET: Openwrt_minilite_drive
   # ------------------- #
-  # LEAN: true
+  LEAN: true
   # LIENOL: true
-  ARM: true
+  # ARM: true
   # ------------------- #
-  DEFAULT_CONFIG: true
-  # DIY_CONFIG: true
+  # DEFAULT_CONFIG: true
+  DIY_CONFIG: true
   # ------------------- #
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
@@ -55,19 +55,19 @@ jobs:
         # if: env.DIY_CONFIG == 'true'
         run: |
           # ========================================= #
-          # echo "::set-env name=CPU_S::$(echo 'x86')"
-          echo "::set-env name=CPU_S::$(echo 'arm')"
+          echo "::set-env name=CPU_S::$(echo 'x86')"
+          # echo "::set-env name=CPU_S::$(echo 'arm')"
           # ----------------------------------------- #
-          # echo "::set-env name=PATH_CPU::$(echo 'diy')"
+          echo "::set-env name=PATH_CPU::$(echo 'diy')"
           # echo "::set-env name=PATH_CPU::$(echo '1907')"
-          echo "::set-env name=PATH_CPU::$(echo 'armt')"
+          # echo "::set-env name=PATH_CPU::$(echo 'armt')"
           # --------------------------------------------- #
-          # echo "::set-env name=CPU_M::$(echo '32')"
+          echo "::set-env name=CPU_M::$(echo '32')"
           # echo "::set-env name=CPU_M::$(echo '64')"
           # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
           # echo "::set-env name=CPU_M::$(echo 'wdr3320-16m')"
           # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
-          echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
+          # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
           # --------------------------------------------------- #
           echo "::set-env name=PATH_OTH::$(echo 'diy')"
           # echo "::set-env name=PATH_OTH::$(echo '1907')"
