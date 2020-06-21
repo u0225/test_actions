@@ -20,21 +20,21 @@ on:
   #   types: [published]
   watch:
     types: [started]
-  schedule:
-    - cron: 00 10 * * 6
+  # schedule:
+  #   - cron: 00 10 * * 6
 
 env:
   TARGET: Openwrt_minilite_drive
   # ------------------- #
   LEAN: true
   # LIENOL: true
+  # ARM: true
   # ------------------- #
   # DEFAULT_CONFIG: true
   DIY_CONFIG: true
   # ------------------- #
   CONFIG_FILE: config/.config
   FEEDS_FILE: feeds.default
-  ARM_SET: armt/armt-set.sh
   TZ: Asia/Shanghai
 
 jobs:
@@ -58,6 +58,10 @@ jobs:
           echo "::set-env name=CPU_S::$(echo 'x86')"
           # echo "::set-env name=CPU_S::$(echo 'arm')"
           # ----------------------------------------- #
+          echo "::set-env name=PATH_CPU::$(echo 'diy')"
+          # echo "::set-env name=PATH_CPU::$(echo '1907')"
+          # echo "::set-env name=PATH_CPU::$(echo 'armt')"
+          # --------------------------------------------- #
           # echo "::set-env name=CPU_M::$(echo '32')"
           echo "::set-env name=CPU_M::$(echo '64')"
           # echo "::set-env name=CPU_M::$(echo 'miwifi-mini-16m')"
@@ -67,10 +71,6 @@ jobs:
           # --------------------------------------------------- #
           echo "::set-env name=PATH_CONF_OTH::$(echo 'diy')"
           # echo "::set-env name=PATH_CONF_OTH::$(echo '1907')"
-          # --------
-          echo "::set-env name=PATH_CPU::$(echo 'diy')"
-          # echo "::set-env name=PATH_CPU::$(echo '1907')"
-          # echo "::set-env name=PATH_CPU::$(echo 'armt')"
           # --------
           echo "::set-env name=others::$(echo 'others')"
           # echo "::set-env name=others::$(echo 'others_1907')"
@@ -98,22 +98,42 @@ jobs:
 
       - name: Lean
         id: lean
-        if: env.LEAN == 'true'
+        if: env.LEAN == 'true' && env.CPU_S == 'x86'
         run: |
           echo "::set-env name=REPO_URL::$(echo 'https://github.com/coolsnowwolf/lede')"
           echo "::set-env name=REPO_BRANCH::$(echo 'master')"
           echo "::set-env name=X86_DIY::$(echo 'diy/diy.sh')"
-          echo "::set-env name=BRANCH_SET::$(echo 'armt/master.sh')"
           echo "::set-env name=lean::$(echo 'lean')"
 
       - name: Lienol
         id: lienol
-        if: env.LIENOL == 'true'
+        if: env.LIENOL == 'true' && env.CPU_S == 'x86'
         run: |
           echo "::set-env name=REPO_URL::$(echo 'https://github.com/Lienol/openwrt')"
           echo "::set-env name=REPO_BRANCH::$(echo 'dev-19.07')"
           echo "::set-env name=feeds_conf::$(echo 'sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default')"
           echo "::set-env name=lienol::$(echo 'lienol')"
+
+      - name: Arm
+        id: arm
+        if: env.ARM == 'true' && env.CPU_S == 'arm'
+        run: |
+          echo "::set-env name=REPO_URL::$(echo 'https://github.com/u0225/lede')"
+          # -------------------------------------------------- #
+          # echo "::set-env name=REPO_BRANCH::$(echo 'master')"
+          echo "::set-env name=REPO_BRANCH::$(echo 'r8.1.12')"
+          # echo "::set-env name=REPO_BRANCH::$(echo 'r9.8.17')"
+          # echo "::set-env name=REPO_BRANCH::$(echo 'r9.10.10')"
+          # echo "::set-env name=REPO_BRANCH::$(echo '20200408')"
+          # echo "::set-env name=REPO_BRANCH::$(echo '20200416')"
+          # echo "::set-env name=REPO_BRANCH::$(echo 'r20.5.20')"
+          # --------------------------------------------------------- #
+          # echo "::set-env name=BRANCH_SET::$(echo 'armt/master.sh')"
+          echo "::set-env name=BRANCH_SET::$(echo 'armt/r89.sh')"
+          # echo "::set-env name=BRANCH_SET::$(echo 'armt/r20.sh')"
+          # ------------------------------------------------------ #
+          echo "::set-env name=ARM_SET::$(echo 'armt/armt-set.sh')"
+          echo "::set-env name=lean::$(echo 'lean')"
 
       - name: Space cleanup
         env:
@@ -207,11 +227,13 @@ jobs:
           ${{ env.vps_m }}
           cd openwrt
           ../$X86_DIY
+          ../$ARM_SET
           ./scripts/feeds install -a
           make defconfig
 
       - name: Load custom configuration
-        if: env.DIY_CONFIG == 'true'
+        id: diy_config
+        if: env.DIY_CONFIG == 'true' && env.CPU_S == 'x86'
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
@@ -222,6 +244,20 @@ jobs:
           cat ${{ env.PATH_CONF_OTH }}/samba4 >> openwrt/.config
           cd openwrt
           ../$X86_DIY
+          ./scripts/feeds install -a
+          make defconfig
+
+      - name: Load arm configuration
+        id: diy_arm_config
+        if: env.DIY_CONFIG && env.ARM == 'true' && env.CPU_S == 'arm'
+        run: |
+          rm -f openwrt/.config*
+          touch openwrt/.config
+          ${{ env.cpu }}
+          ${{ env.vps_m }}
+          cat armt/armt-luci-app-16m >> openwrt/.config
+          cd openwrt
+          ../$ARM_SET
           ./scripts/feeds install -a
           make defconfig
 
