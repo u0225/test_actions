@@ -26,8 +26,8 @@ on:
 env:
   TARGET: Openwrt_minilite_drive
   # ------------------- #
-  LEAN: true
-  # LIENOL: true
+  # LEAN: true
+  LIENOL: true
   # ARM: true
   # ------------------- #
   # DEFAULT_CONFIG: true
@@ -58,8 +58,8 @@ jobs:
           echo "::set-env name=CPU_S::$(echo 'x86')"
           # echo "::set-env name=CPU_S::$(echo 'arm')"
           # ----------------------------------------- #
-          echo "::set-env name=PATH_CPU::$(echo 'diy')"
-          # echo "::set-env name=PATH_CPU::$(echo '1907')"
+          # echo "::set-env name=PATH_CPU::$(echo 'diy')"
+          echo "::set-env name=PATH_CPU::$(echo '1907')"
           # echo "::set-env name=PATH_CPU::$(echo 'armt')"
           # --------------------------------------------- #
           # echo "::set-env name=CPU_M::$(echo '32')"
@@ -69,15 +69,15 @@ jobs:
           # echo "::set-env name=CPU_M::$(echo 'wr8305rt-16m')"
           # echo "::set-env name=CPU_M::$(echo 'youku-yk1-32m')"
           # --------------------------------------------------- #
-          echo "::set-env name=PATH_CONF_OTH::$(echo 'diy')"
-          # echo "::set-env name=PATH_CONF_OTH::$(echo '1907')"
+          # echo "::set-env name=PATH_OTH::$(echo 'diy')"
+          echo "::set-env name=PATH_OTH::$(echo '1907')"
           # --------
-          echo "::set-env name=others::$(echo 'others')"
-          # echo "::set-env name=others::$(echo 'others_1907')"
+          # echo "::set-env name=others::$(echo 'others')"
+          echo "::set-env name=others::$(echo 'others_1907')"
           # -------------------------------------------------- #
-          # echo "::set-env name=VPS_S::$(echo 'psw')"
+          echo "::set-env name=VPS_S::$(echo 'psw')"
           # echo "::set-env name=VPS_S::$(echo 'ssr')"
-          echo "::set-env name=VPS_S::$(echo 'ssr_new')"
+          # echo "::set-env name=VPS_S::$(echo 'ssr_new')"
           # ------------------------------------------- #
           # echo "::set-env name=PATH_S::$(echo 'diy')"
           # echo "::set-env name=PATH_S::$(echo '1907')"
@@ -103,6 +103,11 @@ jobs:
           echo "::set-env name=REPO_URL::$(echo 'https://github.com/coolsnowwolf/lede')"
           echo "::set-env name=REPO_BRANCH::$(echo 'master')"
           echo "::set-env name=X86_DIY::$(echo '../diy/diy.sh')"
+          # -----
+          echo "::set-env name=drive::$(echo 'cat ${{ env.PATH_CPU }}/drive >> openwrt/.config')"
+          echo "::set-env name=mini-lite::$(echo 'cat ${{ env.PATH_CPU }}/mini-lite >> openwrt/.config')"
+          echo "::set-env name=samba4::$(echo 'cat ${{ env.PATH_CPU }}/samba4 >> openwrt/.config')"
+          # -----
           echo "::set-env name=lean::$(echo 'lean')"
 
       - name: Lienol
@@ -112,6 +117,11 @@ jobs:
           echo "::set-env name=REPO_URL::$(echo 'https://github.com/Lienol/openwrt')"
           echo "::set-env name=REPO_BRANCH::$(echo 'dev-19.07')"
           echo "::set-env name=feeds_conf::$(echo 'sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default')"
+          # -----
+          echo "::set-env name=drive::$(echo 'cat ${{ env.PATH_CPU }}/drive >> openwrt/.config')"
+          echo "::set-env name=mini-lite::$(echo 'cat ${{ env.PATH_CPU }}/mini-lite >> openwrt/.config')"
+          echo "::set-env name=samba4::$(echo 'cat ${{ env.PATH_CPU }}/samba4 >> openwrt/.config')"
+          # -----
           echo "::set-env name=lienol::$(echo 'lienol')"
 
       - name: Arm
@@ -133,6 +143,8 @@ jobs:
           # echo "::set-env name=BRANCH_SET::$(echo './armt/r20.sh')"
           # ------------------------------------------------------ #
           echo "::set-env name=ARM_SET::$(echo '../armt/armt-set.sh')"
+          # -----
+          echo "::set-env name=arm_conf::$(echo 'cat ${{ env.PATH_CPU }}/armt-luci-app-16m >> openwrt/.config')"
           echo "::set-env name=lean::$(echo 'lean')"
 
       - name: Space cleanup
@@ -169,30 +181,30 @@ jobs:
         id: psw
         if: env.VPS_S == 'psw'
         run: |
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
 
       - name: Set ssr
         id: ssr
         if: env.VPS_S == 'ssr'
         run: |
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
 
       - name: Set ssr_new
         id: ssr_new
         if: env.VPS_S == 'ssr_new'
         run: |
-          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
-          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
-          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
+          sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
+          sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
 
       - name: Clone openwrt
         run: |
           git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
           chmod -R 775 ./
-          ./${{ env.PATH_CONF_OTH }}/${{ env.others }}.sh
+          ./${{ env.PATH_OTH }}/${{ env.others }}.sh
           ${{ env.feeds_conf }}
           # sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
           ${{ env.BRANCH_SET }}
@@ -233,30 +245,18 @@ jobs:
 
       - name: Load custom configuration
         id: diy_config
-        if: env.DIY_CONFIG == 'true' && env.CPU_S == 'x86'
+        if: env.DIY_CONFIG == 'true'
         run: |
           rm -f openwrt/.config*
           touch openwrt/.config
           ${{ env.cpu }}
           ${{ env.vps_m }}
-          cat ${{ env.PATH_CONF_OTH }}/drive >> openwrt/.config
-          cat ${{ env.PATH_CONF_OTH }}/mini-lite >> openwrt/.config
-          cat ${{ env.PATH_CONF_OTH }}/samba4 >> openwrt/.config
+          ${{ env.drive }}
+          ${{ env.mini-lite }}
+          ${{ env.samba4 }}
+          ${{ env.arm_conf }}
           cd openwrt
           ${{ env.X86_DIY }}
-          ./scripts/feeds install -a
-          make defconfig
-
-      - name: Load arm configuration
-        id: diy_arm_config
-        if: env.DIY_CONFIG && env.ARM == 'true' && env.CPU_S == 'arm'
-        run: |
-          rm -f openwrt/.config*
-          touch openwrt/.config
-          ${{ env.cpu }}
-          ${{ env.vps_m }}
-          cat armt/armt-luci-app-16m >> openwrt/.config
-          cd openwrt
           ${{ env.ARM_SET }}
           ./scripts/feeds install -a
           make defconfig
