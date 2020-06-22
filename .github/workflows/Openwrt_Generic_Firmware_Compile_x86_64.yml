@@ -131,12 +131,12 @@ jobs:
           echo "::set-env name=REPO_URL::$(echo 'https://github.com/u0225/lede')"
           # -------------------------------------------------- #
           # echo "::set-env name=REPO_BRANCH::$(echo 'master')"
+          # echo "::set-env name=REPO_BRANCH::$(echo 'r20.5.20')"
           echo "::set-env name=REPO_BRANCH::$(echo 'r8.1.12')"
           # echo "::set-env name=REPO_BRANCH::$(echo 'r9.8.17')"
           # echo "::set-env name=REPO_BRANCH::$(echo 'r9.10.10')"
           # echo "::set-env name=REPO_BRANCH::$(echo '20200408')"
           # echo "::set-env name=REPO_BRANCH::$(echo '20200416')"
-          # echo "::set-env name=REPO_BRANCH::$(echo 'r20.5.20')"
           # --------------------------------------------------------- #
           # echo "::set-env name=BRANCH_SET::$(echo './armt/master.sh')"
           echo "::set-env name=BRANCH_SET::$(echo './armt/r89.sh')"
@@ -144,6 +144,8 @@ jobs:
           # ------------------------------------------------------ #
           echo "::set-env name=ARM_SET::$(echo '../armt/armt-set.sh')"
           # -----
+          echo "::set-env name=feeds::$(echo 'cp -rf ${{ env.FEEDS_FILE }} openwrt/feeds.conf.default')"
+          echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
           echo "::set-env name=arm_conf::$(echo 'cat ${{ env.PATH_CPU }}/armt-luci-app-16m >> openwrt/.config')"
           echo "::set-env name=lean::$(echo 'lean')"
 
@@ -179,21 +181,21 @@ jobs:
 
       - name: Set psw
         id: psw
-        if: env.VPS_S == 'psw'
+        if: env.VPS_S == 'psw' && env.CPU_S == 'x86'
         run: |
           sed -i "s?cp -rf package-others/vps/luci-app-ssr-plus?# cp -rf package-others/vps/luci-app-ssr-plus?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
 
       - name: Set ssr
         id: ssr
-        if: env.VPS_S == 'ssr'
+        if: env.VPS_S == 'ssr' && env.CPU_S == 'x86'
         run: |
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
           echo "::set-env name=vps_m::$(echo 'cat vps/${{ env.CPU_S }}.${{ env.VPS_S }} >> openwrt/.config')"
 
       - name: Set ssr_new
         id: ssr_new
-        if: env.VPS_S == 'ssr_new'
+        if: env.VPS_S == 'ssr_new' && env.CPU_S == 'x86'
         run: |
           sed -i "s?# git clone https://github.com/fw876/helloworld.git?git clone https://github.com/fw876/helloworld.git?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
           sed -i "s?cp -rf package-others/vps/psw_single?# cp -rf package-others/vps/psw_single?g" ${{ env.PATH_OTH }}/${{ env.others }}.sh
@@ -208,6 +210,7 @@ jobs:
           ${{ env.feeds_conf }}
           # sed -i "s/src-git lienol/# src-git lienol/g" openwrt/feeds.conf.default
           ${{ env.BRANCH_SET }}
+          ${{ env.feeds }}
 
       - name: Free up disk space
         if: env.FREE_UP_DISK == 'true'
@@ -297,7 +300,7 @@ jobs:
       #     path: openwrt/bin
 
       - name: Prepare ipk packages artifact
-        run: mkdir -p ./ipk/targets && cp -r ./openwrt/bin/targets/*/*/packages ./ipk/targets/packages && cp -r ./openwrt/bin/packages ./ipk
+        run: mkdir -p ./ipk/targets && cp -rf ./openwrt/bin/targets/*/*/packages ./ipk/targets/packages && cp -rf ./openwrt/bin/packages ./ipk
 
       - name: Upload ipk packages artifact
         uses: actions/upload-artifact@master
@@ -369,7 +372,7 @@ jobs:
       - name: Prepare config and download_link
         run: |
           mkdir ./download_link
-          cp -r ./openwrt/.config ./download_link/${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_openwrt_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
+          cp -rf ./openwrt/.config ./download_link/${{ env.date1 }}_${{ env.lean }}${{ env.lienol }}_openwrt_${{ env.CPU_S }}_${{ env.CPU_M }}_${{ env.VPS_S }}.config
           echo "有效保存时间7天" >> ./download_link/download_link.txt
           echo "墙内加速下载_奶牛快传: ${{ env.COWURL }}" >> ./download_link/download_link.txt
           echo "墙内加速下载_WeTransfer: ${{ env.WETRANS }}" >> ./download_link/download_link.txt
