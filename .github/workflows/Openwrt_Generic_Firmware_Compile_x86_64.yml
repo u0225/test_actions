@@ -239,8 +239,8 @@ jobs:
         id: KERNEL
         if: env.LEAN == 'true' && env.KERNEL == '4.19'
         run: |
-          sed -i "s?KERNEL_PATCHVER:=5.4?KERNEL_PATCHVER:=4.19?g" openwt/target/linux/x86/Makefile
-          sed -i "s?KERNEL_TESTING_PATCHVER:=5.4?KERNEL_TESTING_PATCHVER:=4.19?g" openwt/target/linux/x86/Makefile
+          sed -i "s?KERNEL_PATCHVER:=5.4?KERNEL_PATCHVER:=4.19?g" openwrt/target/linux/x86/Makefile
+          sed -i "s?KERNEL_TESTING_PATCHVER:=5.4?KERNEL_TESTING_PATCHVER:=4.19?g" openwrt/target/linux/x86/Makefile
 
       - name: Load default configuration
         id: default_config
