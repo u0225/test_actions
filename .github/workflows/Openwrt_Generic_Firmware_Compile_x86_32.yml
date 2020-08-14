@@ -108,6 +108,9 @@ jobs:
           echo "::set-env name=mini-lite::$(echo 'cat ${{ env.PATH_CPU }}/mini-lite >> openwrt/.config')"
           echo "::set-env name=samba4::$(echo 'cat ${{ env.PATH_CPU }}/samba4 >> openwrt/.config')"
           # -----
+          echo "::set-env name=KERNEL::$(echo '4.19')"
+          # echo "::set-env name=KERNEL::$(echo '5.4')"
+          # -----
           echo "::set-env name=lean::$(echo 'lean')"
 
       - name: Lienol
@@ -231,6 +234,13 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           df -h
+
+      - name: Lean KERNEL 4.19
+        id: KERNEL
+        if: env.LEAN == 'true' && env.KERNEL == '4.19'
+        run: |
+          sed -i "s?KERNEL_PATCHVER:=5.4?KERNEL_PATCHVER:=4.19?g" openwt/target/linux/x86/Makefile
+          sed -i "s?KERNEL_TESTING_PATCHVER:=5.4?KERNEL_TESTING_PATCHVER:=4.19?g" openwt/target/linux/x86/Makefile
 
       - name: Load default configuration
         id: default_config
